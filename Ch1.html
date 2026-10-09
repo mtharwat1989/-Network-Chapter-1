@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منصة عبدالله العبيدي | مراجعة تحليل الشبكات الاجتماعية Chapter 1</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script>
+tailwind.config = { theme:{ extend:{ colors:{ gold:{DEFAULT:'#D4AF37',light:'#F5D67B',dark:'#8C6A00'}, royal:{900:'#080D29',800:'#0E1642',700:'#162066',600:'#1E2C8A'} }, fontFamily:{ cairo:['Cairo','sans-serif'], taj:['Tajawal','sans-serif'], pop:['Poppins','sans-serif'] } } } }
+</script>
+<style>
+*{font-family:'Cairo','Tajawal',sans-serif}
+body{background:#070B24;color:#fff;overflow-x:hidden}
+.gold-text{background:linear-gradient(135deg,#FFF6C8 0%,#F5D67B 20%,#D4AF37 45%,#FFF0A0 60%,#B8860B 80%,#F5D67B 100%);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% auto;animation:shine 4s linear infinite}
+@keyframes shine{to{background-position:200% center}}
+.glass{background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.03));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(212,175,55,.28)}
+.gold-border{position:relative;border:1px solid rgba(212,175,55,.5)}
+.gold-border::before{content:'';position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:linear-gradient(135deg,#F5D67B,#8C6A00,#FFF6C8,#B8860B);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:.9}
+.btn-gold{background:linear-gradient(135deg,#F8E28A 0%,#D4AF37 35%,#A67C00 70%,#F5D67B 100%);background-size:200% auto;color:#1a1400;font-weight:900;box-shadow:0 8px 30px rgba(212,175,55,.4),inset 0 1px 0 rgba(255,255,255,.7);transition:.35s}
+.btn-gold:hover{background-position:left center;transform:translateY(-2px) scale(1.02);box-shadow:0 15px 45px rgba(212,175,55,.6)}
+.btn-ghost{border:1px solid rgba(212,175,55,.4);transition:.3s}
+.btn-ghost:hover{background:rgba(212,175,55,.12);border-color:#D4AF37}
+.blob{position:fixed;border-radius:50%;filter:blur(90px);opacity:.35;pointer-events:none;z-index:0;animation:float 12s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-40px) scale(1.08)}}
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+.opt{transition:.25s;text-align:right;width:100%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;cursor:pointer;position:relative;overflow:hidden}
+.opt:hover:not(:disabled){border-color:#D4AF37;background:rgba(212,175,55,.1);transform:translateY(-2px)}
+.opt:disabled{cursor:default}
+.opt.correct{border-color:#22c55e!important;background:linear-gradient(135deg,rgba(34,197,94,.25),rgba(34,197,94,.1))!important;box-shadow:0 0 25px rgba(34,197,94,.4)}
+.opt.wrong{border-color:#ef4444!important;background:linear-gradient(135deg,rgba(239,68,68,.25),rgba(239,68,68,.1))!important;box-shadow:0 0 25px rgba(239,68,68,.35)}
+.opt.dim{opacity:.45}
+.opt-letter{flex-shrink:0;width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;background:linear-gradient(135deg,#D4AF37,#8C6A00);color:#1a1400}
+.shake{animation:shake .5s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-7px)}80%{transform:translateX(7px)}}
+.pop{animation:pop .5s cubic-bezier(.68,-.55,.265,1.55)}
+@keyframes pop{0%{transform:scale(.8);opacity:0}100%{transform:scale(1);opacity:1}}
+.glow-pulse{animation:glowP 2s infinite}
+@keyframes glowP{0%,100%{box-shadow:0 0 20px rgba(212,175,55,.4)}50%{box-shadow:0 0 45px rgba(212,175,55,.8)}}
+.progress-gold{background:linear-gradient(90deg,#8C6A00,#D4AF37,#FFF6C8,#D4AF37);background-size:200% auto;animation:shine 2.5s linear infinite}
+.pal-btn{width:42px;height:42px;border-radius:12px;font-weight:800;font-size:14px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);transition:.25s}
+.pal-btn:hover{transform:scale(1.1);border-color:#D4AF37}
+.pal-btn.current{border:2px solid #F5D67B;box-shadow:0 0 18px rgba(212,175,55,.7);transform:scale(1.12)}
+.pal-btn.ok{background:linear-gradient(135deg,#16a34a,#15803d);border-color:#22c55e}
+.pal-btn.bad{background:linear-gradient(135deg,#dc2626,#991b1b);border-color:#ef4444}
+.pal-btn.skip{background:rgba(245,214,123,.2);border-color:#D4AF37}
+.ar-box{background:linear-gradient(135deg,rgba(212,175,55,.16),rgba(212,175,55,.06));border:1px dashed rgba(212,175,55,.6);border-radius:14px}
+.feedback-ok{background:linear-gradient(135deg,rgba(34,197,94,.2),rgba(34,197,94,.08));border:1px solid #22c55e}
+.feedback-bad{background:linear-gradient(135deg,rgba(239,68,68,.2),rgba(239,68,68,.08));border:1px solid #ef4444}
+.score-ring{transform:rotate(-90deg)}
+.score-ring circle{transition:stroke-dashoffset 2s ease}
+.trophy-float{animation:trophyF 3s ease-in-out infinite}
+@keyframes trophyF{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-14px) rotate(3deg)}}
+#celebrateOverlay{transition:.4s}
+.crown-shine{position:relative;overflow:hidden}
+.crown-shine::after{content:'';position:absolute;top:0;left:-80%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg);animation:sheen 3s infinite}
+@keyframes sheen{0%{left:-80%}60%,100%{left:130%}}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:#0E1642}
+::-webkit-scrollbar-thumb{background:linear-gradient(#D4AF37,#8C6A00);border-radius:10px}
+.toast{animation:slideIn .4s cubic-bezier(.68,-.55,.265,1.55)}
+@keyframes slideIn{from{transform:translateY(30px) scale(.9);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+@media print{body *{visibility:hidden}#reportSection,#reportSection *{visibility:visible}#reportSection{position:absolute;top:0;right:0;left:0;background:#fff!important;color:#000!important} .no-print{display:none!important}}
+.chapter-badge{background:linear-gradient(135deg,rgba(212,175,55,.2),rgba(212,175,55,.05));border:1px solid rgba(212,175,55,.4)}
+.hero-pattern{background-image:radial-gradient(rgba(212,175,55,.15) 1px,transparent 1px);background-size:22px 22px}
+.streak-fire{animation:fire .8s infinite alternate}
+@keyframes fire{from{transform:scale(1)}to{transform:scale(1.15) rotate(-5deg)}}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="blob" style="width:520px;height:520px;background:#D4AF37;top:-150px;right:-150px"></div>
+<div class="blob" style="width:420px;height:420px;background:#1E2C8A;bottom:10%;left:-120px;animation-delay:2s"></div>
+<div class="blob" style="width:300px;height:300px;background:#7C3AED;top:40%;right:30%;opacity:.2;animation-delay:4s"></div>
+
+<!-- PRELOADER -->
+<div id="preloader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#070B24] transition-opacity duration-700">
+<div class="w-24 h-24 rounded-3xl btn-gold flex items-center justify-center text-5xl glow-pulse">👑</div>
+<h1 class="mt-6 text-2xl font-black gold-text">منصة عبدالله العبيدي الذهبية</h1>
+<p class="text-white/60 mt-2">جاري تجهيز تجربة ملكية تليق ببطل الشبكات...</p>
+<div class="w-64 h-2 mt-6 rounded-full bg-white/10 overflow-hidden"><div id="loadBar" class="h-full progress-gold rounded-full" style="width:0%"></div></div>
+</div>
+
+<!-- HEADER -->
+<header class="sticky top-0 z-50 glass border-b border-[#D4AF37]/30">
+<div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-2xl btn-gold flex items-center justify-center text-2xl crown-shine">👑</div>
+<div><div class="font-black text-lg leading-none">عبدالله <span class="gold-text">العبيدي</span></div><div class="text-[12px] text-white/60">تحليل الشبكات الاجتماعية • Chapter 1 • كويز التفوق</div></div>
+</div>
+<div class="hidden md:flex items-center gap-2 text-sm">
+<a href="#home" class="px-4 py-2 rounded-xl hover:bg-white/10 transition">الرئيسية</a>
+<a href="#summarySection" class="px-4 py-2 rounded-xl hover:bg-white/10 transition">الملخص</a>
+<a href="#quizSection" class="px-4 py-2 rounded-xl hover:bg-white/10 transition">الاختبار</a>
+<a href="#reportSection" class="px-4 py-2 rounded-xl hover:bg-white/10 transition">التقرير</a>
+</div>
+<div class="flex items-center gap-2">
+<div class="hidden sm:flex items-center gap-2 glass rounded-xl px-3 py-2 text-sm"><i class="fa-solid fa-bolt text-[#F5D67B]"></i><span id="hdrScore" class="font-black">0</span><span class="text-white/50">نقطة</span></div>
+<button onclick="toggleSound()" id="soundBtn" class="w-11 h-11 rounded-xl btn-ghost flex items-center justify-center text-xl">🔊</button>
+</div>
+</div>
+<div class="h-1 bg-white/10"><div id="topProgress" class="h-full progress-gold transition-all duration-500" style="width:0%"></div></div>
+</header>
+
+<!-- HERO -->
+<section id="home" class="relative z-10 max-w-7xl mx-auto px-4 pt-10 pb-6">
+<div class="grid lg:grid-cols-2 gap-6 items-stretch">
+<div class="glass gold-border rounded-3xl p-7 md:p-10 relative overflow-hidden hero-pattern">
+<div class="absolute top-0 left-0 w-full h-1 progress-gold"></div>
+<div class="inline-flex items-center gap-2 chapter-badge rounded-full px-4 py-2 text-sm font-bold text-[#F5D67B]"><span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> الفصل الأول • مراجعة شاملة استعدادًا للكويز • 70 سؤالًا بالنص الأصلي</div>
+<h1 class="text-3xl md:text-5xl font-black leading-[1.25] mt-5">أهلاً بالبطل <span class="gold-text">عبدالله العبيدي</span> 🏆<br><span class="text-xl md:text-2xl font-bold text-white/90">رحلتك الملكية نحو العلامة الكاملة في تحليل الشبكات الاجتماعية</span></h1>
+<p class="text-white/70 mt-4 leading-8">أجب على الأسئلة التفاعلية بالترتيب كما في الكتاب. لو أجبت صح سأقول لك <b class="text-[#F5D67B]">«أحسنت عبدالله كمّل يا بطل»</b> مع احتفالات وأصوات تحفيزية 🎉 ولو أخطأت سأقول <b>«حاول مرة أخرى»</b> وأمنحك فرصة للتعلم. بجانب كل سؤال زر <b class="text-[#F5D67B]">🌐 ترجم</b> يظهر الترجمة العربية بجانب السؤال والإجابات مباشرة. وفي النهاية تقرير ملكي مفصّل.</p>
+<div class="flex flex-wrap gap-3 mt-6">
+<button onclick="scrollToQuiz()" class="btn-gold rounded-2xl px-8 py-4 text-lg"><i class="fa-solid fa-play ml-2"></i> ابدأ التحدي الآن</button>
+<button onclick="translateAllToggle()" class="btn-ghost rounded-2xl px-6 py-4 font-bold">🌐 ترجمة الكل</button>
+<button onclick="document.getElementById('paletteCard').scrollIntoView({behavior:'smooth'})" class="btn-ghost rounded-2xl px-6 py-4 font-bold">🗺️ خريطة الأسئلة</button>
+</div>
+<div class="grid grid-cols-3 gap-3 mt-7">
+<div class="rounded-2xl bg-white/5 border border-white/10 p-4 text-center"><div class="text-2xl font-black gold-text">70</div><div class="text-xs text-white/60 font-bold">سؤالًا كاملًا</div></div>
+<div class="rounded-2xl bg-white/5 border border-white/10 p-4 text-center"><div class="text-2xl font-black gold-text">35+35</div><div class="text-xs text-white/60 font-bold">صح/خطأ + اختياري</div></div>
+<div class="rounded-2xl bg-white/5 border border-white/10 p-4 text-center"><div class="text-2xl font-black gold-text" id="bestScoreHero">0%</div><div class="text-xs text-white/60 font-bold">أفضل نتيجة لك</div></div>
+</div>
+</div>
+
+<div class="flex flex-col gap-6">
+<div class="glass gold-border rounded-3xl p-6 text-center relative overflow-hidden crown-shine">
+<div class="trophy-float text-7xl">🏆</div>
+<h3 class="font-black text-xl mt-2">بطاقة البطل الذهبية</h3>
+<div class="flex items-center justify-center gap-3 mt-4">
+<div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl font-black btn-gold">ع</div>
+<div class="text-right"><div class="font-black">عبدالله العبيدي</div><div class="text-xs text-[#F5D67B] font-bold">⭐ المستوى <span id="levelNum">1</span> • <span id="xpNum">0</span> XP</div><div class="w-40 h-2 bg-white/10 rounded-full mt-2 overflow-hidden"><div id="xpBar" class="h-full progress-gold" style="width:0%"></div></div></div>
+</div>
+<div class="grid grid-cols-3 gap-2 mt-5 text-sm">
+<div class="rounded-xl bg-black/30 border border-white/10 p-3"><div class="font-black text-lg" id="statCorrect">0</div><div class="text-green-400 text-xs font-bold">✅ صحيحة</div></div>
+<div class="rounded-xl bg-black/30 border border-white/10 p-3"><div class="font-black text-lg" id="statWrong">0</div><div class="text-red-400 text-xs font-bold">❌ خاطئة</div></div>
+<div class="rounded-xl bg-black/30 border border-white/10 p-3"><div class="font-black text-lg" id="statStreak">0 🔥</div><div class="text-orange-300 text-xs font-bold">سلسلة التوهج</div></div>
+</div>
+<div class="mt-4 flex items-center justify-center gap-2 text-sm bg-black/30 rounded-xl p-3 border border-[#D4AF37]/30"><i class="fa-regular fa-clock text-[#F5D67B]"></i> الوقت: <b id="timerHero">00:00</b> <span class="text-white/40">|</span> <span>السؤال <b id="heroQpos" class="text-[#F5D67B]">1</b> / 70</span></div>
+</div>
+
+<div class="grid grid-cols-2 gap-4">
+<button onclick="setMode('train')" id="modeTrain" class="glass rounded-2xl p-5 text-right border-2 border-[#D4AF37] transition hover:scale-[1.02]">
+<div class="text-2xl">🎓</div><div class="font-black mt-1">وضع التدريب البطولي</div><div class="text-xs text-white/60 mt-1 leading-5">محاولات للتعلم + شرح + التقييم على أول إجابة</div><div class="text-[11px] mt-2 font-black text-green-400">● مُفعّل الآن</div>
+</button>
+<button onclick="setMode('exam')" id="modeExam" class="glass rounded-2xl p-5 text-right border-2 border-transparent transition hover:scale-[1.02]">
+<div class="text-2xl">⏱️</div><div class="font-black mt-1">وضع الكويز الحقيقي</div><div class="text-xs text-white/60 mt-1 leading-5">محاولة واحدة فقط بدون رجعة مثل الاختبار</div><div class="text-[11px] mt-2 font-black text-white/40" id="examLabel">○ اضغط للتفعيل</div>
+</button>
+</div>
+</div>
+</div>
+
+<!-- QUOTE -->
+<div class="mt-6 glass rounded-2xl px-6 py-4 flex items-center gap-4 border-r-4 border-[#D4AF37]">
+<div class="text-3xl">💬</div><div><div class="font-black text-[#F5D67B]" id="quoteText">«تحليل الشبكات يركّز على التفاعل لا على سلوك الفرد»</div><div class="text-xs text-white/50">حكمة تحفيزية تتغير كل 8 ثوانٍ لإبقائك مشتعلًا يا عبدالله 🔥</div></div>
+</div>
+</section>
+
+<!-- SUMMARY -->
+<section id="summarySection" class="relative z-10 max-w-7xl mx-auto px-4 py-6">
+<div class="glass gold-border rounded-3xl p-6 md:p-8 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 progress-gold"></div>
+<div class="flex flex-wrap items-center justify-between gap-3">
+<h2 id="sumTitle" class="text-2xl md:text-3xl font-black gold-text font-pop">📘 Chapter 1 Summary</h2>
+<button id="sumBtn" onclick="toggleSummary()" class="btn-gold rounded-xl px-5 py-3 font-black text-sm">🌐 ترجم للعربية</button>
+</div>
+<div id="sumBody" class="grid md:grid-cols-2 gap-4 mt-5"></div>
+<h3 id="exTitle" class="text-xl md:text-2xl font-black text-[#F5D67B] mt-8 mb-1"></h3>
+<div id="exBody" class="grid md:grid-cols-2 gap-4 mt-4"></div>
+</div>
+</section>
+
+<!-- QUIZ -->
+<section id="quizSection" class="relative z-10 max-w-7xl mx-auto px-4 py-6">
+<div class="grid lg:grid-cols-[1fr_300px] gap-6 items-start">
+
+<div class="glass gold-border rounded-3xl overflow-hidden">
+<div class="p-4 md:p-5 flex flex-wrap items-center justify-between gap-3 bg-black/20 border-b border-[#D4AF37]/20">
+<div class="flex items-center gap-2 flex-wrap">
+<span id="qCounter" class="btn-gold rounded-xl px-4 py-2 text-sm">السؤال 1 / 70</span>
+<span id="qPageBadge" class="rounded-xl px-3 py-2 text-sm font-bold bg-white/10 border border-white/15">📄 صفحة 3</span>
+<span id="qTypeBadge" class="rounded-xl px-3 py-2 text-sm font-bold bg-purple-500/20 border border-purple-400/40 text-purple-200">صح / خطأ</span>
+<span id="attemptBadge" class="rounded-xl px-3 py-2 text-sm font-bold bg-white/10 border border-white/15 hidden">المحاولة 2</span>
+</div>
+<div class="flex items-center gap-2">
+<button onclick="toggleBookmark()" id="bmBtn" class="w-10 h-10 rounded-xl btn-ghost flex items-center justify-center" title="حفظ في المفضلة">🤍</button>
+<button onclick="toggleTranslateCurrent()" id="trBtn" class="rounded-xl px-4 py-2.5 font-black text-sm btn-gold">🌐 ترجم</button>
+</div>
+</div>
+
+<div class="h-2 bg-white/10"><div id="quizProgress" class="h-full progress-gold transition-all duration-500" style="width:2%"></div></div>
+
+<div id="qCard" class="p-5 md:p-8">
+<div class="flex items-center gap-2 text-xs text-white/50 font-bold mb-3"><i class="fa-solid fa-book-open text-[#D4AF37]"></i> نص السؤال الأصلي كما في الكتاب (بالترتيب) — أجب لتكمل التحدي</div>
+<h2 id="qEn" dir="ltr" class="text-left font-pop font-semibold text-lg md:text-2xl leading-9 bg-black/30 border border-white/10 rounded-2xl p-5"></h2>
+<div id="qArBox" class="ar-box p-4 mt-3 hidden pop"><div class="text-[11px] font-black text-[#F5D67B] mb-1">🇸🇦 الترجمة العربية المباشرة:</div><div id="qAr" class="font-bold leading-8 text-[15px] md:text-lg"></div></div>
+<div id="optsGrid" class="grid gap-3 mt-5"></div>
+<div id="feedbackBox" class="mt-5 hidden rounded-2xl p-5 text-center font-black text-lg pop"></div>
+<div id="explainBox" class="mt-3 hidden rounded-2xl p-4 bg-blue-500/10 border border-blue-400/40 text-sm leading-7"></div>
+<div class="flex flex-wrap items-center justify-between gap-3 mt-6">
+<div class="flex gap-2">
+<button onclick="prevQ()" class="btn-ghost rounded-xl px-5 py-3 font-bold">→ السابق</button>
+<button onclick="nextQ()" class="btn-gold rounded-xl px-7 py-3">التالي ←</button>
+</div>
+<div class="flex gap-2">
+<button onclick="skipQ()" class="btn-ghost rounded-xl px-4 py-3 text-sm font-bold">⏭️ تخطي</button>
+<button onclick="confirmFinish()" class="rounded-xl px-5 py-3 text-sm font-black bg-gradient-to-l from-red-500 to-orange-500 hover:scale-105 transition shadow-lg">🏁 إنهاء و عرض النتيجة</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="flex flex-col gap-5">
+<div id="paletteCard" class="glass rounded-3xl p-5 gold-border">
+<h3 class="font-black flex items-center gap-2"><span class="text-xl">🗺️</span> خريطة المعركة <span class="text-xs font-bold text-white/50">(70 سؤالًا)</span></h3>
+<div class="flex flex-wrap gap-2 mt-3 text-[11px] font-bold">
+<button onclick="setFilter('all')" class="filter-btn px-3 py-1.5 rounded-lg bg-[#D4AF37] text-black" data-f="all">الكل</button>
+<button onclick="setFilter('un')" class="filter-btn px-3 py-1.5 rounded-lg bg-white/10" data-f="un">غير مجاب</button>
+<button onclick="setFilter('ok')" class="filter-btn px-3 py-1.5 rounded-lg bg-white/10" data-f="ok">صح</button>
+<button onclick="setFilter('bad')" class="filter-btn px-3 py-1.5 rounded-lg bg-white/10" data-f="bad">خطأ</button>
+<button onclick="setFilter('bm')" class="filter-btn px-3 py-1.5 rounded-lg bg-white/10" data-f="bm">⭐ مفضلة</button>
+</div>
+<div id="palette" class="grid grid-cols-5 gap-2 mt-4 max-h-[380px] overflow-y-auto p-1"></div>
+<div class="mt-4 text-xs leading-6 text-white/60 bg-black/30 rounded-xl p-3 border border-white/10">🟩 صح من أول مرة • 🟥 يحتاج مراجعة • 🟨 متخطّى • ✨ الذهبي = سؤالك الحالي<br>💡 التقييم النهائي يعتمد على <b class="text-[#F5D67B]">أول إجابة</b> في وضع التدريب.</div>
+<button onclick="confirmFinish()" class="btn-gold w-full rounded-xl py-3 mt-3 font-black">📊 اعرض تقرير عبدالله النهائي</button>
+</div>
+
+<div class="glass rounded-3xl p-5">
+<h3 class="font-black">⚔️ أسلحة البطل</h3>
+<div class="grid grid-cols-2 gap-2 mt-3 text-sm font-bold">
+<button onclick="translateAllToggle()" class="btn-ghost rounded-xl py-3">🌐 ترجمة الكل</button>
+<button onclick="toggleSound()" class="btn-ghost rounded-xl py-3">🔊 الصوت</button>
+<button onclick="restartQuiz()" class="btn-ghost rounded-xl py-3">🔄 من جديد</button>
+<button onclick="reviewBookmarks()" class="btn-ghost rounded-xl py-3">⭐ المفضلة</button>
+</div>
+<div class="mt-3 rounded-xl bg-black/30 border border-[#D4AF37]/30 p-3 text-xs leading-6"><b class="text-[#F5D67B]">نصيحة ذهبية يا عبدالله:</b> استخدم لوحة المفاتيح: <b>1-4</b> للإجابة • <b>T</b> للترجمة • <b>→ ←</b> للتنقل.</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- REPORT -->
+<section id="reportSection" class="relative z-10 max-w-7xl mx-auto px-4 py-8 hidden">
+<div class="glass gold-border rounded-3xl p-6 md:p-10 text-center relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1.5 progress-gold"></div>
+<div class="trophy-float text-8xl">🏆</div>
+<h2 class="text-3xl md:text-4xl font-black mt-3">تقرير البطل <span class="gold-text">عبدالله العبيدي</span></h2>
+<p id="reportSubtitle" class="text-white/60 mt-2 font-bold"></p>
+<div class="grid md:grid-cols-3 gap-6 mt-8 items-center">
+<div class="flex flex-col items-center">
+<div class="relative w-52 h-52">
+<svg class="score-ring w-52 h-52" viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="12"/><circle id="scoreCircle" cx="60" cy="60" r="52" fill="none" stroke="url(#gg)" stroke-width="12" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7"/><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F5D67B"/><stop offset="50%" stop-color="#D4AF37"/><stop offset="100%" stop-color="#FFF6C8"/></linearGradient></defs></svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center"><div id="finalPct" class="text-4xl font-black gold-text">0%</div><div class="text-xs text-white/50 font-bold">النسبة النهائية</div></div>
+</div>
+<div id="gradeBadge" class="mt-3 px-6 py-2 rounded-full font-black btn-gold"></div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="rounded-2xl bg-green-500/10 border border-green-500/40 p-5"><div class="text-3xl font-black text-green-400" id="rCorrect">0</div><div class="text-xs font-bold text-green-300">✅ إجابات صحيحة</div></div>
+<div class="rounded-2xl bg-red-500/10 border border-red-500/40 p-5"><div class="text-3xl font-black text-red-400" id="rWrong">0</div><div class="text-xs font-bold text-red-300">❌ تحتاج مراجعة</div></div>
+<div class="rounded-2xl bg-white/5 border border-white/15 p-5"><div class="text-3xl font-black gold-text" id="rTime">00:00</div><div class="text-xs font-bold text-white/60">⏱️ زمن الإنجاز</div></div>
+<div class="rounded-2xl bg-white/5 border border-white/15 p-5"><div class="text-3xl font-black gold-text" id="rStreak">0</div><div class="text-xs font-bold text-white/60">🔥 أفضل سلسلة</div></div>
+</div>
+<div class="glass rounded-2xl p-4">
+<canvas id="chartDoughnut" height="220"></canvas>
+<div class="mt-2 text-xs text-white/50 font-bold">توزيع الأداء: صح / خطأ / متخطّى</div>
+<hr class="border-white/10 my-3">
+<canvas id="chartBars" height="220"></canvas>
+<div class="mt-2 text-xs text-white/50 font-bold">الأداء حسب القسم: صح/خطأ (Q1-35) مقابل اختياري (Q36-70)</div>
+</div>
+</div>
+<div id="finalMessage" class="mt-6 text-xl font-black leading-9 rounded-2xl p-5 feedback-ok"></div>
+<div class="flex flex-wrap justify-center gap-3 mt-6 no-print">
+<button onclick="showOnlyWrong=false;renderReportList();toggleWrongBtn(this)" class="btn-gold rounded-xl px-6 py-3 font-black">📋 عرض الكل (70)</button>
+<button onclick="showOnlyWrong=true;renderReportList();toggleWrongBtn(this)" class="btn-ghost rounded-xl px-6 py-3 font-bold">❌ مراجعة الأخطاء فقط</button>
+<button onclick="restartQuiz()" class="btn-ghost rounded-xl px-6 py-3 font-bold">🔄 إعادة الاختبار</button>
+<button onclick="window.print()" class="btn-ghost rounded-xl px-6 py-3 font-bold">🖨️ طباعة التقرير</button>
+<button onclick="shareResult()" class="btn-ghost rounded-xl px-6 py-3 font-bold">📤 مشاركة النتيجة</button>
+</div>
+</div>
+
+<div class="mt-6 flex items-center gap-3">
+<div class="flex-1 h-px bg-gradient-to-l from-transparent via-[#D4AF37] to-transparent"></div>
+<h3 class="font-black text-xl whitespace-nowrap">📝 كشف الدرجات التفصيلي <span class="text-sm text-white/50">مع الإجابات النموذجية</span></h3>
+<div class="flex-1 h-px bg-gradient-to-l from-transparent via-[#D4AF37] to-transparent"></div>
+</div>
+<div id="reportList" class="grid gap-4 mt-5"></div>
+</section>
+
+<footer class="relative z-10 max-w-7xl mx-auto px-4 pb-10 pt-4 text-center text-white/40 text-sm">
+<div class="glass rounded-2xl p-5">صُنع بفخر 👑 للبطل <b class="gold-text">عبدالله العبيدي</b> • مراجعة Chapter 1 تحليل الشبكات الاجتماعية • بالتوفيق في الكويز يا بطل 🚀<br><span class="text-xs">جميع الأسئلة الـ 70 موضوعة كما هي بالترتيب مع ملخص وتقرير ذكي</span></div>
+</footer>
+
+<!-- CELEBRATION TOAST -->
+<div id="toastWrap" class="fixed bottom-6 right-1/2 translate-x-1/2 z-[90] flex flex-col items-center gap-2 pointer-events-none w-[92%] max-w-md"></div>
+<div id="bigCheer" class="fixed inset-0 z-[95] hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+<div class="glass gold-border rounded-3xl p-8 text-center max-w-md w-full pop crown-shine">
+<div class="text-7xl trophy-float" id="bigCheerEmoji">🎉</div>
+<h2 id="bigCheerTitle" class="text-2xl font-black gold-text mt-3">أحسنت عبدالله كمّل يا بطل! 🏆</h2>
+<p id="bigCheerSub" class="text-white/70 font-bold mt-2 text-sm leading-7"></p>
+<button onclick="closeCheer()" class="btn-gold rounded-xl px-8 py-3 mt-5 font-black">واصل يا بطل 🚀</button>
+</div>
+</div>
+
+<script>
+/* ================= DATA - 50 QUESTIONS EXACT ORDER ================= */
+const QUESTIONS = [{"id": 1, "page": 2, "type": "tf", "en": "Social network analysis (SNA) is the mapping and measuring of relationships and flows between connected entities.", "ar": "تحليل الشبكات الاجتماعية (SNA) هو رسم وقياس العلاقات والتدفقات بين الكيانات المترابطة.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. The chapter defines SNA as the mapping and measuring of relationships and flows between people, groups, organizations, computers, URLs and other connected information/knowledge entities.", "exAr": "صح. يعرّف الشابتر SNA بأنه رسم وقياس العلاقات والتدفقات بين الأشخاص والمجموعات والمنظمات والحواسيب والروابط (URLs) وغيرها من الكيانات المترابطة."}, {"id": 2, "page": 2, "type": "tf", "en": "The links in a network represent the people and groups, while the nodes represent relationships.", "ar": "الروابط في الشبكة تمثل الأشخاص والمجموعات، بينما تمثل العُقد العلاقات.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 1, "ex": "False. The statement is reversed. The NODES are the people and groups, and the LINKS show the relationships or flows between the nodes.", "exAr": "خطأ. العبارة معكوسة: العُقد (nodes) هي الأشخاص والمجموعات، والروابط (links) تُظهر العلاقات أو التدفقات بين العُقد."}, {"id": 3, "page": 2, "type": "tf", "en": "SNA provides both a visual and a mathematical analysis of human relationships.", "ar": "يوفر SNA تحليلًا بصريًا ورياضيًا للعلاقات الإنسانية.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. SNA gives a visual analysis (drawing the network as a graph) and a mathematical analysis (matrices and measures such as centrality and density) of human relationships.", "exAr": "صح. يقدّم SNA تحليلًا بصريًا (رسم الشبكة كرسم بياني) وتحليلًا رياضيًا (مصفوفات ومقاييس مثل المركزية والكثافة) للعلاقات الإنسانية."}, {"id": 4, "page": 3, "type": "tf", "en": "Social network analysis focuses on individual behavior rather than interaction.", "ar": "يركز تحليل الشبكات الاجتماعية على السلوك الفردي بدلًا من التفاعل.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 1, "ex": "False. The advantage of SNA is that, unlike many other methods, it focuses on INTERACTION (relationships) rather than on individual behavior.", "exAr": "خطأ. ميزة SNA أنه، بخلاف كثير من الطرق، يركّز على التفاعل (العلاقات) وليس على السلوك الفردي."}, {"id": 5, "page": 3, "type": "tf", "en": "Network configuration can influence how individuals, groups, organizations, or systems function.", "ar": "يمكن لتشكيل الشبكة أن يؤثر في طريقة عمل الأفراد أو المجموعات أو المنظمات أو الأنظمة.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. Network analysis lets us examine how the configuration (structure) of a network influences how individuals, groups, organizations or whole systems function.", "exAr": "صح. يتيح تحليل الشبكات فحص كيف يؤثر تشكيل (بنية) الشبكة على طريقة عمل الأفراد والمجموعات والمنظمات والأنظمة."}, {"id": 6, "page": 4, "type": "tf", "en": "Nodes can have quantitative attributes, such as age.", "ar": "يمكن أن تكون للعُقد سمات كمية، مثل العمر.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. Nodes have attributes that can be categories (e.g., being male) or quantitative values (e.g., being 56 years of age).", "exAr": "صح. للعُقد سمات قد تكون فئوية (مثل كونه ذكرًا) أو كمية (مثل أن عمره 56 سنة)."}, {"id": 7, "page": 4, "type": "tf", "en": "In network analysis, relationships between nodes are called attributes.", "ar": "في تحليل الشبكات، تُسمى العلاقات بين العُقد سمات (attributes).", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 1, "ex": "False. Relationships between nodes are called TIES or LINKS (edges). Attributes are the characteristics of the nodes themselves.", "exAr": "خطأ. العلاقات بين العُقد تُسمى روابط (ties/links أو edges). أما السمات فهي خصائص العُقد نفسها."}, {"id": 8, "page": 6, "type": "tf", "en": "A social network is a set of dyadic ties, all of the same type, among a set of actors.", "ar": "الشبكة الاجتماعية هي مجموعة من الروابط الثنائية من النوع نفسه بين مجموعة من الفاعلين.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. This is the chapter's definition: a set of dyadic ties (pairs of actors), all of the same type, among a set of actors.", "exAr": "صح. هذا تعريف الشابتر: مجموعة من الروابط الثنائية (أزواج من الفاعلين) من النوع نفسه بين مجموعة من الفاعلين."}, {"id": 9, "page": 6, "type": "tf", "en": "A tie is an instance of a specific social relationship.", "ar": "الرابطة (tie) هي مثال على علاقة اجتماعية محددة.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. A tie is one instance of a specific social relationship, for example a friendship, marriage or co-ownership between two actors.", "exAr": "صح. الرابطة هي مثال واحد على علاقة اجتماعية محددة، مثل الصداقة أو الزواج أو الشراكة في عمل بين فاعلين."}, {"id": 10, "page": 7, "type": "tf", "en": "Homophily refers to the tendency for people to have positive ties with people who are different from themselves on socially significant attributes.", "ar": "يشير التماثل (Homophily) إلى ميل الناس لتكوين روابط إيجابية مع أشخاص مختلفين عنهم في السمات الاجتماعية المهمة.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 1, "ex": "False. Homophily is the tendency to form positive ties with people who are SIMILAR to oneself (gender, race, religion, ethnicity, class), not different.", "exAr": "خطأ. التماثل (Homophily) هو ميل الناس لتكوين روابط إيجابية مع من يشبهونهم (الجنس، العرق، الدين، الأصل، الطبقة) وليس المختلفين عنهم."}, {"id": 11, "page": 7, "type": "tf", "en": "Computer Science is concerned with designing and understanding complex network structures.", "ar": "يهتم علم الحاسوب بتصميم وفهم بُنى الشبكات المعقدة.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. Computer Science contributes the designing and understanding of complex network structures.", "exAr": "صح. يساهم علم الحاسوب في تصميم وفهم بُنى الشبكات المعقدة."}, {"id": 12, "page": 7, "type": "tf", "en": "Mathematics focuses on theories and measurement of social networks to understand human behavior.", "ar": "يركز علم الرياضيات على نظريات وقياس الشبكات الاجتماعية لفهم السلوك البشري.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 1, "ex": "False. That is the role of Social Science (sociology, social psychology, economics). Mathematics contributes methods and complex-systems analysis.", "exAr": "خطأ. هذا دور العلوم الاجتماعية (علم الاجتماع، علم النفس الاجتماعي، الاقتصاد). أما الرياضيات فتساهم بالأساليب وتحليل الأنظمة المعقدة."}, {"id": 13, "page": 8, "type": "tf", "en": "Kinship, social roles, affective relationships, and cognitive relationships are examples of relationship types.", "ar": "القرابة والأدوار الاجتماعية والعلاقات العاطفية والمعرفية أمثلة على أنواع العلاقات.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. The relationship types listed include kinship (brother of), social roles (boss of), affective (likes), cognitive (knows), actions (talks to), flows, distance and co-occurrence.", "exAr": "صح. من أنواع العلاقات: القرابة (أخ لـ)، الأدوار الاجتماعية (رئيس لـ)، العاطفية (يحب)، المعرفية (يعرف)، الأفعال (يتحدث إلى)، التدفقات، المسافة، والتواجد المشترك."}, {"id": 14, "page": 9, "type": "tf", "en": "Nodes are normally expected to be inanimate objects rather than active agents.", "ar": "يُتوقع عادةً أن تكون العُقد أشياء جامدة وليست عناصر فاعلة.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 1, "ex": "False. Nodes are normally expected to be ACTIVE AGENTS (people, teams, firms, cities, countries), not inanimate objects.", "exAr": "خطأ. المتوقع أن تكون العُقد عناصر فاعلة (أشخاص، فرق، شركات، مدن، دول) وليست أشياء جامدة."}, {"id": 15, "page": 9, "type": "tf", "en": "Nodes can represent individuals and collectivities such as teams, firms, cities, and countries.", "ar": "يمكن أن تمثل العُقد أفرادًا وكيانات جماعية مثل الفرق والشركات والمدن والدول.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. Nodes can be individuals (persons) or collectivities such as teams, firms, cities and countries.", "exAr": "صح. يمكن أن تكون العُقد أفرادًا أو كيانات جماعية مثل الفرق والشركات والمدن والدول."}, {"id": 16, "page": 9, "type": "tf", "en": "The three levels of analysis are the dyad, the node, and the network.", "ar": "مستويات التحليل الثلاثة هي: الثنائي (dyad) والعقدة (node) والشبكة (network).", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. The three levels of analysis are the dyad (pairs), the node (single actors) and the network (the whole structure).", "exAr": "صح. مستويات التحليل الثلاثة: الثنائي (dyad) أي الأزواج، والعقدة (node) أي الفاعل الواحد، والشبكة (network) أي البنية كاملة."}, {"id": 17, "page": 11, "type": "tf", "en": "Individual-level analysis examines how an individual's position in a network affects outcomes for that individual.", "ar": "يفحص تحليل المستوى الفردي كيف يؤثر موقع الفرد في الشبكة على النتائج الخاصة به.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. The individual level asks how a person's position in the network affects the outcomes for that person.", "exAr": "صح. المستوى الفردي يسأل: كيف يؤثر موقع الشخص في الشبكة على نتائجه؟"}, {"id": 18, "page": 11, "type": "tf", "en": "Systems-level analysis examines only the position of a single individual in a network.", "ar": "يفحص تحليل مستوى النظام موقع فرد واحد فقط في الشبكة.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 1, "ex": "False. That describes the individual level. The systems level asks how the structure of the WHOLE network affects outcomes for tasks.", "exAr": "خطأ. هذا وصف المستوى الفردي. أما مستوى النظام فيسأل: كيف تؤثر بنية الشبكة ككل على نتائج المهام؟"}, {"id": 19, "page": 12, "type": "tf", "en": "An egocentric network is centered on an individual rather than a group.", "ar": "الشبكة الشخصية (egocentric) تتمحور حول فرد وليس مجموعة.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. 'Ego' means the network is centered on one individual and not on a group; the people connected to the ego are called alters.", "exAr": "صح. كلمة ego تعني أن الشبكة تتمحور حول فرد وليس مجموعة، ويُسمى المرتبطون به alters."}, {"id": 20, "page": 12, "type": "tf", "en": "Egocentric work always collects information directly from the people connected to the ego.", "ar": "العمل على الشبكة الشخصية يجمع دائمًا المعلومات مباشرة من الأشخاص المرتبطين بالفرد (ego).", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 1, "ex": "False. Egocentric work collects information about a person's ties WITHOUT collecting information from those ties; the data come from the ego.", "exAr": "خطأ. العمل الشخصي يجمع معلومات عن روابط الشخص دون جمع معلومات من أصحاب هذه الروابط؛ فالبيانات تأتي من الـ ego."}, {"id": 21, "page": 12, "type": "tf", "en": "Whole-network analysis studies ties among all pairs of nodes in a given set.", "ar": "يدرس تحليل الشبكة الكاملة الروابط بين جميع أزواج العُقد في مجموعة معينة.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. Whole-network analysis studies the set of ties among all pairs of nodes in a given set, e.g., who is friends with whom in a whole department.", "exAr": "صح. تحليل الشبكة الكاملة يدرس الروابط بين كل أزواج العُقد في مجموعة معينة، مثل من صديق من في قسم كامل."}, {"id": 22, "page": 13, "type": "tf", "en": "Personal (Egocentric) Network Analysis collects data from the respondent (ego) about interactions with network members (alters).", "ar": "يجمع تحليل الشبكة الشخصية بيانات من المستجيب (ego) حول تفاعلاته مع أعضاء الشبكة (alters).", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. In personal (egocentric) analysis, data are collected from the respondent (ego) about interactions with network members (alters) in all social settings.", "exAr": "صح. في التحليل الشخصي تُجمع البيانات من المستجيب (ego) عن تفاعلاته مع أعضاء شبكته (alters) في جميع السياقات الاجتماعية."}, {"id": 23, "page": 13, "type": "tf", "en": "Whole (Sociocentric) Network Analysis focuses on interaction within a socially or geographically bounded group.", "ar": "يركز تحليل الشبكة الكاملة (Sociocentric) على التفاعل داخل مجموعة محددة اجتماعيًا أو جغرافيًا.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. Whole (sociocentric) analysis studies interaction within a socially or geographically bounded group, e.g., seniors in a retirement home.", "exAr": "صح. التحليل الكامل (Sociocentric) يدرس التفاعل داخل مجموعة محددة اجتماعيًا أو جغرافيًا، مثل كبار السن في دار مسنين."}, {"id": 24, "page": 15, "type": "tf", "en": "In a directed network, interaction flows one way.", "ar": "في الشبكة الموجّهة، يتدفق التفاعل في اتجاه واحد.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. In a directed network the link has a direction, so interaction flows one way (e.g., a web page linking to another page).", "exAr": "صح. في الشبكة الموجّهة للرابط اتجاه، فيتدفق التفاعل في اتجاه واحد (مثل صفحة ويب تشير إلى صفحة أخرى)."}, {"id": 25, "page": 15, "type": "tf", "en": "Undirected links represent interactions that flow in one direction only.", "ar": "تمثل الروابط غير الموجّهة تفاعلات تتدفق في اتجاه واحد فقط.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 1, "ex": "False. Undirected links mean interactions flow BOTH ways. One-way flow describes directed links.", "exAr": "خطأ. الروابط غير الموجّهة تعني أن التفاعل يتدفق في الاتجاهين. أما الاتجاه الواحد فهو للروابط الموجّهة."}, {"id": 26, "page": 15, "type": "tf", "en": "Web pages and hyperlinks are examples of a directed network.", "ar": "صفحات الويب والروابط التشعبية أمثلة على الشبكة الموجّهة.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. Web pages and hyperlinks form a directed network because a hyperlink points from one page to another; citation networks are also directed.", "exAr": "صح. صفحات الويب والروابط التشعبية شبكة موجّهة لأن الرابط يشير من صفحة إلى أخرى، وكذلك شبكات الاستشهادات."}, {"id": 27, "page": 15, "type": "tf", "en": "Social networks involving people and friendships are listed as examples of directed networks.", "ar": "الشبكات الاجتماعية التي تضم الأشخاص والصداقات مذكورة كأمثلة على الشبكات الموجّهة.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 1, "ex": "False. Social networks of people and friendships are examples of UNDIRECTED networks, since a friendship goes both ways.", "exAr": "خطأ. الشبكات الاجتماعية للأشخاص والصداقات أمثلة على الشبكات غير الموجّهة لأن الصداقة متبادلة."}, {"id": 28, "page": 16, "type": "tf", "en": "One mode and two mode are types of network data shown in the lecture.", "ar": "أحادية النمط (one mode) وثنائية النمط (two mode) نوعان من بيانات الشبكة المعروضة في المحاضرة.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. The lecture's types of network data include one-mode and two-mode, and whole-network and egocentric data.", "exAr": "صح. من أنواع بيانات الشبكة في المحاضرة: أحادي النمط وثنائي النمط، والشبكة الكاملة والشبكة الشخصية."}, {"id": 29, "page": 17, "type": "tf", "en": "A Simple Adjacency Matrix is used in analyzing social networks.", "ar": "تُستخدم مصفوفة التجاور البسيطة في تحليل الشبكات الاجتماعية.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. The simple adjacency matrix has a row and column for each node: 1 means a tie exists, 0 means no tie (and a dash on the diagonal).", "exAr": "صح. مصفوفة التجاور البسيطة لها صف وعمود لكل عقدة: الرقم 1 يعني وجود رابط، و0 يعني عدم وجوده (وشرطة في القطر)."}, {"id": 30, "page": 18, "type": "tf", "en": "The example states that Mohamed knows Ali and Yasser.", "ar": "يذكر المثال أن محمد يعرف علي وياسر.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. In the practice example, Mohamed knows Ali and Yasser, so the matrix has 1s for those pairs.", "exAr": "صح. في مثال التمرين: محمد يعرف علي وياسر، لذلك تكون الخانات المقابلة 1."}, {"id": 31, "page": 18, "type": "tf", "en": "In the example, Ali works with Sofian and lives with Saber.", "ar": "في المثال، يعمل علي مع سفيان ويسكن مع صابر.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 1, "ex": "False. In the example it is TAREK who works with Sofian and lives with Saber; Ali is only Tarek's neighbor.", "exAr": "خطأ. في المثال طارق هو من يعمل مع سفيان ويسكن مع صابر، أما علي فهو جار طارق فقط."}, {"id": 32, "page": 25, "type": "tf", "en": "Weights can be added to directed or undirected edges.", "ar": "يمكن إضافة أوزان إلى الحواف الموجّهة أو غير الموجّهة.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. Weights (frequency of interaction, items exchanged, perceived strength, cost or distance) can be added to directed or undirected edges, replacing the 1 in the matrix.", "exAr": "صح. يمكن إضافة أوزان (تكرار التفاعل، عدد الأشياء المتبادلة، قوة العلاقة، التكلفة أو المسافة) إلى الحواف الموجّهة أو غير الموجّهة، وتحل محل الرقم 1 في المصفوفة."}, {"id": 33, "page": 27, "type": "tf", "en": "The listed types of centrality include Degree Centrality, Closeness Centrality, and Betweenness Centrality.", "ar": "تشمل أنواع المركزية: مركزية الدرجة ومركزية القرب ومركزية الوساطة.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. The three centrality measures in the lecture are degree, closeness and betweenness centrality.", "exAr": "صح. مقاييس المركزية في المحاضرة هي: مركزية الدرجة والقرب والوساطة."}, {"id": 34, "page": 29, "type": "tf", "en": "Dijkstra's algorithm is shown as an example related to paths and shortest paths.", "ar": "تُعرض خوارزمية ديكسترا كمثال متعلق بالمسارات وأقصر المسارات.", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. Dijkstra's algorithm is the example given for finding the shortest paths between nodes.", "exAr": "صح. خوارزمية ديكسترا هي المثال المذكور لإيجاد أقصر المسارات بين العُقد."}, {"id": 35, "page": 34, "type": "tf", "en": "Nodes 3 and 5 have the highest closeness.", "ar": "العقدتان 3 و5 لهما أعلى قرب (closeness).", "opts": {"en": ["True", "False"], "ar": ["صح", "خطأ"]}, "correct": 0, "ex": "True. In the lecture graph, nodes 3 and 5 have the highest closeness (0.75), which equals the lowest mean distance (1.33).", "exAr": "صح. في رسم المحاضرة للعقدتين 3 و5 أعلى قرب (0.75) وهو ما يعادل أقل متوسط مسافة (1.33)."}, {"id": 36, "page": 2, "type": "mcq", "en": "What does SNA primarily involve?", "ar": "ماذا يتضمن SNA أساسًا؟", "opts": {"en": ["A. Mapping and measuring relationships and flows", "B. Measuring individual attributes only", "C. Designing computer hardware", "D. Measuring distances between cities only"], "ar": ["A. رسم وقياس العلاقات والتدفقات", "B. قياس السمات الفردية فقط", "C. تصميم عتاد الحاسوب", "D. قياس المسافات بين المدن فقط"]}, "correct": 0, "ex": "A is correct. SNA is the mapping and measuring of relationships and flows between people, groups, organizations, computers and URLs. It is not limited to individual attributes (B), hardware design (C) or city distances (D).", "exAr": "الإجابة A صحيحة. SNA هو رسم وقياس العلاقات والتدفقات بين الأشخاص والمجموعات والمنظمات والحواسيب والروابط. وهو لا يقتصر على السمات الفردية (B) ولا تصميم العتاد (C) ولا مسافات المدن (D)."}, {"id": 37, "page": 2, "type": "mcq", "en": "What do links show in a network?", "ar": "ماذا تُظهر الروابط في الشبكة؟", "opts": {"en": ["A. The ages of individuals", "B. Relationships or flows between nodes", "C. The number of network levels", "D. The names of organizations only"], "ar": ["A. أعمار الأفراد", "B. العلاقات أو التدفقات بين العُقد", "C. عدد مستويات الشبكة", "D. أسماء المنظمات فقط"]}, "correct": 1, "ex": "B is correct. Links (ties/edges) show the relationships or flows between nodes. Ages are node attributes, and levels and organization names are not what links represent.", "exAr": "الإجابة B صحيحة. الروابط (ties/edges) تُظهر العلاقات أو التدفقات بين العُقد. الأعمار سمات للعُقد، والمستويات وأسماء المنظمات ليست ما تمثله الروابط."}, {"id": 38, "page": 3, "type": "mcq", "en": "What is a key advantage of social network analysis?", "ar": "ما الميزة الرئيسية لتحليل الشبكات الاجتماعية؟", "opts": {"en": ["A. It focuses only on individual behavior.", "B. It ignores relationships between entities.", "C. It focuses on interaction rather than individual behavior.", "D. It studies only computer networks."], "ar": ["A. يركز على السلوك الفردي فقط.", "B. يتجاهل العلاقات بين الكيانات.", "C. يركز على التفاعل بدلًا من السلوك الفردي.", "D. يدرس شبكات الحاسوب فقط."]}, "correct": 2, "ex": "C is correct. Unlike many methods, SNA focuses on interaction rather than on individual behavior, and it studies many kinds of entities, not only computers.", "exAr": "الإجابة C صحيحة. بخلاف كثير من الطرق يركّز SNA على التفاعل لا على السلوك الفردي، ويدرس أنواعًا كثيرة من الكيانات وليس الحواسيب فقط."}, {"id": 39, "page": 4, "type": "mcq", "en": "What are the entities that make up a system called in network analysis?", "ar": "ماذا تُسمى الكيانات المكوِّنة للنظام في تحليل الشبكات؟", "opts": {"en": ["A. Attributes or flows", "B. Actors or nodes", "C. Paths or distances", "D. Groups or matrices"], "ar": ["A. سمات أو تدفقات", "B. فاعلون أو عُقد", "C. مسارات أو مسافات", "D. مجموعات أو مصفوفات"]}, "correct": 1, "ex": "B is correct. The entities that make up the system are called actors or nodes. Attributes describe nodes, flows/paths/distances relate to links, and matrices are a way to represent the network.", "exAr": "الإجابة B صحيحة. تُسمى الكيانات المكوِّنة للنظام فاعلين أو عُقدًا (actors/nodes). السمات تصف العُقد، والمصفوفات طريقة لتمثيل الشبكة."}, {"id": 40, "page": 4, "type": "mcq", "en": "Which of the following is an example of a quantitative attribute?", "ar": "أي مما يلي مثال على سمة كمية؟", "opts": {"en": ["A. Being married", "B. Being a friend", "C. Living together", "D. Being 56 years of age"], "ar": ["A. أن تكون متزوجًا", "B. أن تكون صديقًا", "C. العيش معًا", "D. أن يكون عمرك 56 سنة"]}, "correct": 3, "ex": "D is correct. '56 years of age' is a numeric (quantitative) attribute of a node. Being married, a friend or living together are characteristics of the relationship (tie).", "exAr": "الإجابة D صحيحة. «عمره 56 سنة» سمة كمية (رقمية) للعقدة. أما كونه متزوجًا أو صديقًا أو يعيش مع غيره فهي خصائص للعلاقة (الرابطة)."}, {"id": 41, "page": 6, "type": "mcq", "en": "Which statement best describes a tie?", "ar": "أي عبارة تصف الرابطة (tie) بأفضل شكل؟", "opts": {"en": ["A. An instance of a specific social relationship", "B. A quantitative attribute of a node", "C. A complete network structure", "D. A level of analysis"], "ar": ["A. مثال على علاقة اجتماعية محددة", "B. سمة كمية للعقدة", "C. بنية شبكة كاملة", "D. مستوى من مستويات التحليل"]}, "correct": 0, "ex": "A is correct. A tie is one instance of a specific social relationship between actors. A quantitative attribute describes a node, and a level of analysis is dyad/node/network.", "exAr": "الإجابة A صحيحة. الرابطة هي مثال واحد على علاقة اجتماعية محددة بين فاعلين. السمة الكمية تصف عقدة، ومستوى التحليل هو ثنائي/عقدة/شبكة."}, {"id": 42, "page": 6, "type": "mcq", "en": "Which of the following can be an actor in a social network?", "ar": "أي مما يلي يمكن أن يكون فاعلًا في الشبكة الاجتماعية؟", "opts": {"en": ["A. Only an individual person", "B. Only an organization", "C. A person, organization, or group", "D. Only a computer"], "ar": ["A. شخص فرد فقط", "B. منظمة فقط", "C. شخص أو منظمة أو مجموعة", "D. حاسوب فقط"]}, "correct": 2, "ex": "C is correct. Actors can be persons, organizations or groups; they are not limited to a single type.", "exAr": "الإجابة C صحيحة. يمكن أن يكون الفاعل شخصًا أو منظمة أو مجموعة، فلا يقتصر على نوع واحد."}, {"id": 43, "page": 7, "type": "mcq", "en": "What does homophily describe?", "ar": "ماذا يصف التماثل (homophily)؟", "opts": {"en": ["A. The measurement of network density", "B. The tendency to have positive ties with similar people", "C. The movement of cars between locations", "D. The study of shortest paths"], "ar": ["A. قياس كثافة الشبكة", "B. الميل لتكوين روابط إيجابية مع أشخاص متشابهين", "C. حركة السيارات بين المواقع", "D. دراسة أقصر المسارات"]}, "correct": 1, "ex": "B is correct. Homophily is the tendency to form positive ties with people who are similar on socially significant attributes (gender, race, religion, ethnicity, class).", "exAr": "الإجابة B صحيحة. Homophily هو ميل الناس لتكوين روابط إيجابية مع من يتشابهون معهم في سمات اجتماعية مهمة (الجنس، العرق، الدين، الأصل، الطبقة)."}, {"id": 44, "page": 7, "type": "mcq", "en": "Which field focuses on designing and understanding complex network structures?", "ar": "أي مجال يركز على تصميم وفهم بُنى الشبكات المعقدة؟", "opts": {"en": ["A. Economics", "B. Social Psychology", "C. Sociology", "D. Computer Science"], "ar": ["A. الاقتصاد", "B. علم النفس الاجتماعي", "C. علم الاجتماع", "D. علم الحاسوب"]}, "correct": 3, "ex": "D is correct. Computer Science designs and studies complex network structures. Economics, social psychology and sociology belong to Social Science, which studies theories and measurement of human behavior.", "exAr": "الإجابة D صحيحة. علم الحاسوب يصمم ويدرس بُنى الشبكات المعقدة. أما الاقتصاد وعلم النفس الاجتماعي وعلم الاجتماع فمن العلوم الاجتماعية التي تدرس النظريات وقياس السلوك البشري."}, {"id": 45, "page": 8, "type": "mcq", "en": "Which of the following is an example of an affective relationship?", "ar": "أي مما يلي مثال على علاقة عاطفية؟", "opts": {"en": ["A. Likes", "B. Father of", "C. Boss of", "D. Number of miles between"], "ar": ["A. يحب", "B. أب لـ", "C. رئيس لـ", "D. عدد الأميال بين"]}, "correct": 0, "ex": "A is correct. 'Likes' is an affective relationship (likes, respects, hates). 'Father of' is kinship, 'boss of' is a social role, and miles between is distance.", "exAr": "الإجابة A صحيحة. «يحب» علاقة عاطفية (يحب، يحترم، يكره). «أب لـ» قرابة، و«رئيس لـ» دور اجتماعي، وعدد الأميال مسافة."}, {"id": 46, "page": 8, "type": "mcq", "en": "Which relationship category includes “talks to” and “has lunch with”?", "ar": "أي فئة علاقات تشمل \"يتحدث إلى\" و\"يتناول الغداء مع\"؟", "opts": {"en": ["A. Kinship", "B. Cognitive", "C. Actions", "D. Distance"], "ar": ["A. القرابة", "B. المعرفية", "C. الأفعال", "D. المسافة"]}, "correct": 2, "ex": "C is correct. 'Talks to', 'has lunch with' and 'attacks' are Actions. Kinship is brother/father of, cognitive is knows, and distance is miles.", "exAr": "الإجابة C صحيحة. «يتحدث إلى» و«يتناول الغداء مع» و«يهاجم» كلها أفعال (Actions). القرابة هي أخ/أب لـ، والمعرفية هي يعرف، والمسافة هي الأميال."}, {"id": 47, "page": 9, "type": "mcq", "en": "Which of the following is an example of a collectivity that can be represented as a node?", "ar": "أي مما يلي مثال على كيان جماعي يمكن تمثيله كعقدة؟", "opts": {"en": ["A. A person's age", "B. A city", "C. A tie strength", "D. A relationship attribute"], "ar": ["A. عمر شخص", "B. مدينة", "C. قوة رابطة", "D. سمة علاقة"]}, "correct": 1, "ex": "B is correct. A city is a collectivity (like teams, firms, countries). Age, tie strength and relationship attributes are characteristics, not nodes.", "exAr": "الإجابة B صحيحة. المدينة كيان جماعي (مثل الفرق والشركات والدول). العمر وقوة الرابطة وسمات العلاقة خصائص وليست عُقدًا."}, {"id": 48, "page": 9, "type": "mcq", "en": "Which set contains the three levels of analysis identified in the lecture?", "ar": "أي مجموعة تضم مستويات التحليل الثلاثة في المحاضرة؟", "opts": {"en": ["A. Individual, group, organization", "B. Directed, undirected, weighted", "C. Personal, social, geographical", "D. Dyad, node, network"], "ar": ["A. فرد، مجموعة، منظمة", "B. موجّه، غير موجّه، موزون", "C. شخصي، اجتماعي، جغرافي", "D. ثنائي، عقدة، شبكة"]}, "correct": 3, "ex": "D is correct. The three levels of analysis are the dyad, the node and the network (with complexity O(n^2), O(n) and O(1) in the lecture table).", "exAr": "الإجابة D صحيحة. مستويات التحليل الثلاثة: الثنائي والعقدة والشبكة (وفي جدول المحاضرة تعقيدها O(n²) وO(n) وO(1))."}, {"id": 49, "page": 11, "type": "mcq", "en": "What question is associated with the Individual Level?", "ar": "ما السؤال المرتبط بالمستوى الفردي؟", "opts": {"en": ["A. How does individual position in a network affect outcomes for the individual?", "B. How many types of network data exist?", "C. How are web pages connected through hyperlinks?", "D. How many miles are between two locations?"], "ar": ["A. كيف يؤثر موقع الفرد في الشبكة على نتائجه؟", "B. كم نوعًا من بيانات الشبكة يوجد؟", "C. كيف ترتبط صفحات الويب بالروابط التشعبية؟", "D. كم ميلًا بين موقعين؟"]}, "correct": 0, "ex": "A is correct. The individual level asks how a person's position in the network affects outcomes for that individual. The other options are unrelated to levels of analysis.", "exAr": "الإجابة A صحيحة. المستوى الفردي يسأل كيف يؤثر موقع الفرد في الشبكة على نتائجه. بقية الخيارات لا علاقة لها بمستويات التحليل."}, {"id": 50, "page": 11, "type": "mcq", "en": "What does Systems Level analysis examine?", "ar": "ماذا يفحص تحليل مستوى النظام؟", "opts": {"en": ["A. The attributes of a single node only", "B. The ties of one respondent only", "C. How the network structure as a whole affects outcomes for tasks", "D. The age of each actor in the network"], "ar": ["A. سمات عقدة واحدة فقط", "B. روابط مستجيب واحد فقط", "C. كيف تؤثر بنية الشبكة ككل على نتائج المهام", "D. عمر كل فاعل في الشبكة"]}, "correct": 2, "ex": "C is correct. Systems-level analysis studies how the structure of the whole network affects outcomes for tasks, not a single node or respondent.", "exAr": "الإجابة C صحيحة. تحليل مستوى النظام يدرس كيف تؤثر بنية الشبكة ككل على نتائج المهام، وليس عقدة واحدة أو مستجيبًا واحدًا."}, {"id": 51, "page": 12, "type": "mcq", "en": "What does “ego” mean in Egocentric Networks?", "ar": "ماذا تعني \"ego\" في الشبكات الشخصية؟", "opts": {"en": ["A. The complete set of network nodes", "B. An individual at the center of the analysis", "C. A group of organizations", "D. A directed link between two nodes"], "ar": ["A. المجموعة الكاملة لعُقد الشبكة", "B. فرد في مركز التحليل", "C. مجموعة من المنظمات", "D. رابط موجّه بين عقدتين"]}, "correct": 1, "ex": "B is correct. 'Ego' is the individual at the center of an egocentric network; the connected people are alters.", "exAr": "الإجابة B صحيحة. الـ ego هو الفرد في مركز الشبكة الشخصية، والمرتبطون به يُسمون alters."}, {"id": 52, "page": 12, "type": "mcq", "en": "What does whole-network analysis study?", "ar": "ماذا يدرس تحليل الشبكة الكاملة؟", "opts": {"en": ["A. Only the attributes of the ego", "B. Only one individual's relationships", "C. Relationships in unrelated social settings", "D. Ties among all pairs of nodes in a given set"], "ar": ["A. سمات الـ ego فقط", "B. علاقات فرد واحد فقط", "C. علاقات في سياقات اجتماعية غير مترابطة", "D. الروابط بين جميع أزواج العُقد في مجموعة معينة"]}, "correct": 3, "ex": "D is correct. Whole-network analysis studies the set of ties among all pairs of nodes in a given set, such as everyone in a department.", "exAr": "الإجابة D صحيحة. تحليل الشبكة الكاملة يدرس مجموعة الروابط بين كل أزواج العُقد في مجموعة معينة، مثل كل أفراد قسم."}, {"id": 53, "page": 13, "type": "mcq", "en": "In Personal (Egocentric) Network Analysis, what does “ego” refer to?", "ar": "في تحليل الشبكة الشخصية، إلى ماذا تشير \"ego\"؟", "opts": {"en": ["A. The respondent", "B. The entire organization", "C. All network members together", "D. A scientific paper"], "ar": ["A. المستجيب", "B. المنظمة بأكملها", "C. جميع أعضاء الشبكة معًا", "D. ورقة علمية"]}, "correct": 0, "ex": "A is correct. In personal network analysis the ego is the respondent, who reports about interactions with network members (alters).", "exAr": "الإجابة A صحيحة. في تحليل الشبكة الشخصية الـ ego هو المستجيب الذي يخبرنا عن تفاعلاته مع أعضاء الشبكة (alters)."}, {"id": 54, "page": 13, "type": "mcq", "en": "Which is an example of Whole Network Analysis given in the lecture?", "ar": "أي مما يلي مثال على تحليل الشبكة الكاملة في المحاضرة؟", "opts": {"en": ["A. Counting the number of obese people in a personal network", "B. Measuring one person's individual attributes", "C. Predicting depression among seniors using social position in a Retirement Home", "D. Measuring the distance between two cities"], "ar": ["A. عدّ المصابين بالسمنة في شبكة شخصية", "B. قياس السمات الفردية لشخص واحد", "C. التنبؤ بالاكتئاب لدى كبار السن باستخدام موقعهم الاجتماعي في دار مسنين", "D. قياس المسافة بين مدينتين"]}, "correct": 2, "ex": "C is correct. Predicting depression among seniors from their social position in a retirement home studies a bounded group, so it is whole-network analysis. Counting obese people in a personal network is the egocentric example.", "exAr": "الإجابة C صحيحة. التنبؤ بالاكتئاب لدى كبار السن من موقعهم الاجتماعي في دار مسنين يدرس مجموعة محددة، لذا هو تحليل شبكة كاملة. أما عدّ المصابين بالسمنة في شبكة شخصية فهو مثال الشبكة الشخصية."}, {"id": 55, "page": 15, "type": "mcq", "en": "How does interaction flow in a directed network?", "ar": "كيف يتدفق التفاعل في الشبكة الموجّهة؟", "opts": {"en": ["A. In both directions", "B. In one direction", "C. Without any links", "D. Only between groups"], "ar": ["A. في الاتجاهين", "B. في اتجاه واحد", "C. بدون روابط", "D. بين المجموعات فقط"]}, "correct": 1, "ex": "B is correct. In a directed network interaction flows in one direction. Both directions describes undirected links.", "exAr": "الإجابة B صحيحة. في الشبكة الموجّهة يتدفق التفاعل في اتجاه واحد. أما الاتجاهان فهما للروابط غير الموجّهة."}, {"id": 56, "page": 15, "type": "mcq", "en": "Which is an example of an undirected network?", "ar": "أي مما يلي مثال على شبكة غير موجّهة؟", "opts": {"en": ["A. Web pages and hyperlinks", "B. Scientific papers and citations", "C. Directed interaction flows", "D. People and friendships"], "ar": ["A. صفحات الويب والروابط التشعبية", "B. الأوراق العلمية والاستشهادات", "C. تدفقات التفاعل الموجّهة", "D. الأشخاص والصداقات"]}, "correct": 3, "ex": "D is correct. People and friendships form an undirected network. Web pages with hyperlinks and papers with citations are directed.", "exAr": "الإجابة D صحيحة. الأشخاص والصداقات شبكة غير موجّهة. أما صفحات الويب والروابط التشعبية والأوراق والاستشهادات فهي موجّهة."}, {"id": 57, "page": 15, "type": "mcq", "en": "Scientific papers and citations are an example of which type of network?", "ar": "الأوراق العلمية والاستشهادات مثال على أي نوع من الشبكات؟", "opts": {"en": ["A. Directed network", "B. Undirected network", "C. Egocentric network only", "D. Two-mode network only"], "ar": ["A. شبكة موجّهة", "B. شبكة غير موجّهة", "C. شبكة شخصية فقط", "D. شبكة ثنائية النمط فقط"]}, "correct": 0, "ex": "A is correct. A paper cites another paper in one direction, so citation networks are directed.", "exAr": "الإجابة A صحيحة. الورقة تستشهد بورقة أخرى في اتجاه واحد، لذا شبكات الاستشهادات موجّهة."}, {"id": 58, "page": 15, "type": "mcq", "en": "Scientists and co-authored papers are given as an example of which network?", "ar": "العلماء والأوراق المشتركة مثال على أي شبكة؟", "opts": {"en": ["A. Citation network", "B. Directed web network", "C. Collaboration network", "D. Kinship network"], "ar": ["A. شبكة استشهادات", "B. شبكة ويب موجّهة", "C. شبكة تعاون", "D. شبكة قرابة"]}, "correct": 2, "ex": "C is correct. Scientists and co-authored papers form a collaboration network, which is undirected because co-authorship is mutual.", "exAr": "الإجابة C صحيحة. العلماء والأوراق المشتركة يشكلون شبكة تعاون، وهي غير موجّهة لأن التأليف المشترك متبادل."}, {"id": 59, "page": 16, "type": "mcq", "en": "Which pair of categories is presented under Types of Network Data?", "ar": "أي زوج من الفئات يُعرض ضمن أنواع بيانات الشبكة؟", "opts": {"en": ["A. Directed and weighted", "B. One mode and two mode", "C. Degree and closeness", "D. Density and reciprocity"], "ar": ["A. موجّه وموزون", "B. أحادي النمط وثنائي النمط", "C. الدرجة والقرب", "D. الكثافة والتبادلية"]}, "correct": 1, "ex": "B is correct. The lecture's 'Types of network data' lists one-mode and two-mode (and whole network vs. egocentric).", "exAr": "الإجابة B صحيحة. «أنواع بيانات الشبكة» في المحاضرة: أحادي النمط وثنائي النمط (وكذلك الشبكة الكاملة مقابل الشخصية)."}, {"id": 60, "page": 17, "type": "mcq", "en": "What is the name given to the matrix shown for analyzing social networks?", "ar": "ما اسم المصفوفة المعروضة لتحليل الشبكات الاجتماعية؟", "opts": {"en": ["A. Distance Matrix", "B. Centrality Matrix", "C. Weight Matrix", "D. Simple Adjacency Matrix"], "ar": ["A. مصفوفة المسافات", "B. مصفوفة المركزية", "C. مصفوفة الأوزان", "D. مصفوفة التجاور البسيطة"]}, "correct": 3, "ex": "D is correct. The matrix with 1 for a tie and 0 for no tie is the Simple Adjacency Matrix.", "exAr": "الإجابة D صحيحة. المصفوفة التي فيها 1 للرابط و0 لعدم وجوده هي مصفوفة التجاور البسيطة."}, {"id": 61, "page": 18, "type": "mcq", "en": "According to the example, whom does Mohamed know?", "ar": "حسب المثال، من يعرف محمد؟", "opts": {"en": ["A. Ali and Yasser", "B. Tarek and Saber", "C. Ali and Saber", "D. Tarek and Sofian"], "ar": ["A. علي وياسر", "B. طارق وصابر", "C. علي وصابر", "D. طارق وسفيان"]}, "correct": 0, "ex": "A is correct. In the example Mohamed knows Ali and Yasser, and Sofian also knows Mohamed and Yasser.", "exAr": "الإجابة A صحيحة. في المثال محمد يعرف علي وياسر، وسفيان يعرف محمدًا وياسر أيضًا."}, {"id": 62, "page": 18, "type": "mcq", "en": "According to the example, who works with Sofian?", "ar": "حسب المثال، من يعمل مع سفيان؟", "opts": {"en": ["A. Ali", "B. Saber", "C. Tarek", "D. Yasser"], "ar": ["A. علي", "B. صابر", "C. طارق", "D. ياسر"]}, "correct": 2, "ex": "C is correct. Tarek works with Sofian (and lives with Saber). Ali is Tarek's neighbor, not his coworker.", "exAr": "الإجابة C صحيحة. طارق يعمل مع سفيان (ويسكن مع صابر). أما علي فهو جار طارق وليس زميل عمل."}, {"id": 63, "page": 24, "type": "mcq", "en": "Which topic is explicitly presented on this page?", "ar": "أي موضوع معروض صراحةً في هذه الصفحة؟", "opts": {"en": ["A. Degree of reciprocity", "B. Tie Strength", "C. Density", "D. Systems Level"], "ar": ["A. درجة التبادلية", "B. قوة الرابطة (Tie Strength)", "C. الكثافة", "D. مستوى النظام"]}, "correct": 1, "ex": "B is correct. This page is the 'Tie Strength' slide: how to identify strong and weak ties in the network (e.g., by adding weights to edges).", "exAr": "الإجابة B صحيحة. هذه الشريحة هي «قوة الرابطة» (Tie Strength): كيف نحدد الروابط القوية والضعيفة في الشبكة (مثلًا بإضافة أوزان للحواف)."}, {"id": 64, "page": 25, "type": "mcq", "en": "What can be added to directed or undirected edges?", "ar": "ماذا يمكن إضافته إلى الحواف الموجّهة أو غير الموجّهة؟", "opts": {"en": ["A. Attributes", "B. Actors", "C. Dyads", "D. Weight"], "ar": ["A. سمات", "B. فاعلون", "C. ثنائيات", "D. وزن"]}, "correct": 3, "ex": "D is correct. Weights can be added to directed or undirected edges (frequency of interaction, items exchanged, perceived strength, cost); in the matrix the weight replaces the 1.", "exAr": "الإجابة D صحيحة. يمكن إضافة أوزان (تكرار التفاعل، عدد الأشياء المتبادلة، قوة العلاقة، التكلفة) إلى الحواف الموجّهة أو غير الموجّهة، ويحل الوزن محل الرقم 1 في المصفوفة."}, {"id": 65, "page": 27, "type": "mcq", "en": "Which of the following is listed as a type of centrality?", "ar": "أي مما يلي مذكور كنوع من المركزية؟", "opts": {"en": ["A. Degree Centrality", "B. Kinship Centrality", "C. Attribute Centrality", "D. Flow Centrality"], "ar": ["A. مركزية الدرجة", "B. مركزية القرابة", "C. مركزية السمات", "D. مركزية التدفق"]}, "correct": 0, "ex": "A is correct. The centrality measures are degree, closeness and betweenness. Kinship, attribute and flow centrality are not measures in the lecture.", "exAr": "الإجابة A صحيحة. مقاييس المركزية هي الدرجة والقرب والوساطة. أما مركزية القرابة والسمات والتدفق فليست مقاييس في المحاضرة."}, {"id": 66, "page": 28, "type": "mcq", "en": "Which centrality topic is presented on this page?", "ar": "أي موضوع مركزية معروض في هذه الصفحة؟", "opts": {"en": ["A. Closeness Centrality", "B. Betweenness Centrality", "C. Degree Centrality", "D. Degree of Reciprocity"], "ar": ["A. مركزية القرب", "B. مركزية الوساطة", "C. مركزية الدرجة", "D. درجة التبادلية"]}, "correct": 2, "ex": "C is correct (per the answer key). The topic is Degree Centrality: the number of links into or out of a node, used to judge popularity and influence. The centrality types are degree, closeness and betweenness.", "exAr": "الإجابة C صحيحة (حسب مفتاح الإجابات). الموضوع هو مركزية الدرجة: عدد الروابط الداخلة أو الخارجة من العقدة، وتُستخدم لقياس الشعبية والتأثير. وأنواع المركزية هي الدرجة والقرب والوساطة."}, {"id": 67, "page": 29, "type": "mcq", "en": "Which algorithm is shown as an example under “Path and shortest paths”?", "ar": "أي خوارزمية معروضة كمثال ضمن \"المسار وأقصر المسارات\"؟", "opts": {"en": ["A. Adjacency Matrix algorithm", "B. Homophily algorithm", "C. Degree Centrality algorithm", "D. Dijkstra's algorithm"], "ar": ["A. خوارزمية مصفوفة التجاور", "B. خوارزمية التماثل", "C. خوارزمية مركزية الدرجة", "D. خوارزمية ديكسترا"]}, "correct": 3, "ex": "D is correct. Dijkstra's algorithm is the example for finding the shortest path (fewest edges / lowest cost) between nodes.", "exAr": "الإجابة D صحيحة. خوارزمية ديكسترا هي المثال لإيجاد أقصر مسار (أقل عدد حواف / أقل تكلفة) بين العُقد."}, {"id": 68, "page": 30, "type": "mcq", "en": "Which centrality topic is presented on this page?", "ar": "أي موضوع مركزية معروض في هذه الصفحة؟", "opts": {"en": ["A. Degree Centrality", "B. Betweenness Centrality", "C. Closeness Centrality", "D. Systems Centrality"], "ar": ["A. مركزية الدرجة", "B. مركزية الوساطة", "C. مركزية القرب", "D. مركزية النظام"]}, "correct": 1, "ex": "B is correct (per the answer key). Betweenness centrality = for each pair of other nodes, (shortest paths through the node) divided by (all shortest paths), added up. In the example, node 5 = 9 and node 3 = 6.5.", "exAr": "الإجابة B صحيحة (حسب مفتاح الإجابات). مركزية الوساطة = لكل زوج من العقد الأخرى (أقصر الطرق المارة بالعقدة) ÷ (كل أقصر الطرق)، ثم نجمع. في المثال العقدة 5 = 9 والعقدة 3 = 6.5."}, {"id": 69, "page": 34, "type": "mcq", "en": "Which nodes are identified as having the highest closeness?", "ar": "أي عُقد حُدِّدت بأعلى قرب؟", "opts": {"en": ["A. Nodes 1 and 2", "B. Nodes 2 and 4", "C. Nodes 3 and 5", "D. Nodes 4 and 6"], "ar": ["A. العقدتان 1 و2", "B. العقدتان 2 و4", "C. العقدتان 3 و5", "D. العقدتان 4 و6"]}, "correct": 2, "ex": "C is correct. Nodes 3 and 5 have the highest closeness: 6 other nodes with distances adding up to 8 gives 6/8 = 0.75 (equivalently a mean distance of 1.33, the lowest).", "exAr": "الإجابة C صحيحة. للعقدتين 3 و5 أعلى قرب: ست عقد أخرى ومجموع المسافات 8، إذن 6 ÷ 8 = 0.75 (أي متوسط مسافة 1.33 وهو الأقل)."}, {"id": 70, "page": 38, "type": "mcq", "en": "Which topic is presented on this page?", "ar": "أي موضوع معروض في هذه الصفحة؟", "opts": {"en": ["A. Density", "B. Tie Strength", "C. Homophily", "D. Individual Level"], "ar": ["A. الكثافة", "B. قوة الرابطة", "C. التماثل", "D. المستوى الفردي"]}, "correct": 0, "ex": "A is correct (per the answer key). Density = existing links / possible links. Example: 5 existing out of n(n-1)/2 = 6 possible gives 0.83; a directed graph gives 5/12 = 0.42. (Reciprocity, 2/5 = 0.4, is on the neighboring slide.)", "exAr": "الإجابة A صحيحة (حسب مفتاح الإجابات). الكثافة = الروابط الموجودة ÷ الروابط الممكنة. مثال: 5 روابط من 6 ممكنة n(n-1)/2 تعطي 0.83، وفي الرسم الموجّه 5 ÷ 12 = 0.42. (والتبادلية 2/5 = 0.4 في الشريحة المجاورة.)"}];
+
+const successPhrases = ["أحسنت عبدالله كمّل يا بطل! 🏆","ممتاز يا عبدالله! أنت نجم الشبكات 🌟","برافو عبدالله! استمر على هذا التألق 🚀","عاش يا وحش! إجابة ملكية 👑","أسطوري يا عبدالله! الكويز لك بإذن الله 💎","ما شاء الله عليك! عقلك شبكي ذهبي ✨"];
+const failPhrases = ["حاول مرة أخرى يا عبدالله، أنت تقدر! 💪","لا بأس يا بطل، ركّز وحاول مجددًا 🔄","قريب جدًا! المحاولة القادمة لك يا عبدالله 🎯","الفشل أول خطوة للنجاح، حاول مرة أخرى ❤️‍🔥"];
+const quotes = ["«تحليل الشبكات يركّز على التفاعل لا على سلوك الفرد»", "«الدرجة تقيس الاتصال المباشر، والقرب يقيس سرعة الوصول، والوساطة تقيس السيطرة على المسارات»", "«الكثافة = عدد الروابط الفعلية ÷ عدد الروابط الممكنة»"];
+let qi=0;
+let state = QUESTIONS.map(()=>({chosen:null,first:null,attempts:0,done:false,skipped:false,firstCorrect:null}));
+let translated = new Set();
+let translateAll=false;
+let bookmarked=new Set();
+let mode='train';
+let soundOn=true;
+let xp=0, streak=0, bestStreak=0, correctFirst=0;
+let seconds=0, timerInt=null, started=false;
+let filter='all', showOnlyWrong=false;
+let audioCtx=null;
+let charts=[];
+
+/* AUDIO */
+function ctx(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume(); return audioCtx; }
+function tone(f,t,d,type='sine',v=.22,when=0){ if(!soundOn) return; try{ const c=ctx(),o=c.createOscillator(),g=c.createGain(); o.type=type;o.frequency.value=f; const s=c.currentTime+when; g.gain.setValueAtTime(0.0001,s); g.gain.exponentialRampToValueAtTime(v,s+.02); g.gain.exponentialRampToValueAtTime(0.0001,s+d); o.connect(g);g.connect(c.destination);o.start(s);o.stop(s+d+.05);}catch(e){} }
+function playClick(){ tone(600,0,.12,'sine',.12); }
+function playSuccess(){ if(!soundOn) return; [523,659,784,1046,1318].forEach((f,i)=>tone(f,0,.35,'triangle',.22,i*.09)); tone(2093,0,.5,'sine',.12,.5); setTimeout(()=>{ [1046,1318,1568].forEach((f,i)=>tone(f,0,.3,'sine',.15,i*.07)); },450); }
+function playFail(){ if(!soundOn) return; tone(220,0,.3,'sawtooth',.12); tone(174,0,.4,'sawtooth',.12,.15); }
+function playFinish(){ if(!soundOn) return; [523,523,523,659,784,1046,784,1046,1318,1568,2093].forEach((f,i)=>tone(f,0,.35,'triangle',.2,i*.13)); }
+function toggleSound(){ soundOn=!soundOn; document.getElementById('soundBtn').textContent=soundOn?'🔊':'🔇'; if(soundOn) playClick(); toast(soundOn?'🔊 تم تفعيل الأصوات التحفيزية':'🔇 تم كتم الصوت'); }
+
+/* HELPERS */
+function scrollToQuiz(){ document.getElementById('quizSection').scrollIntoView({behavior:'smooth'}); if(!started) startTimer(); playClick(); }
+function setMode(m){ mode=m; playClick(); const t=document.getElementById('modeTrain'),e=document.getElementById('modeExam'); if(m==='train'){ t.classList.add('border-[#D4AF37]'); t.classList.remove('border-transparent'); e.classList.remove('border-[#D4AF37]'); e.classList.add('border-transparent'); t.querySelector('div:last-child').textContent='● مُفعّل الآن'; t.querySelector('div:last-child').className='text-[11px] mt-2 font-black text-green-400'; document.getElementById('examLabel').textContent='○ اضغط للتفعيل'; document.getElementById('examLabel').className='text-[11px] mt-2 font-black text-white/40'; toast('🎓 وضع التدريب: يمكنك المحاولة مجددًا للتعلم'); } else { e.classList.add('border-[#D4AF37]'); e.classList.remove('border-transparent'); t.classList.remove('border-[#D4AF37]'); t.classList.add('border-transparent'); document.getElementById('examLabel').textContent='● مُفعّل الآن'; document.getElementById('examLabel').className='text-[11px] mt-2 font-black text-green-400'; toast('⏱️ وضع الكويز الحقيقي: محاولة واحدة فقط يا بطل!'); } }
+function startTimer(){ if(started) return; started=true; timerInt=setInterval(()=>{ seconds++; const m=String(Math.floor(seconds/60)).padStart(2,'0'),s=String(seconds%60).padStart(2,'0'); document.getElementById('timerHero').textContent=`${m}:${s}`; },1000); }
+function fmt(s){ return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; }
+function toast(msg){ const w=document.getElementById('toastWrap'); const d=document.createElement('div'); d.className='toast pointer-events-auto glass gold-border rounded-2xl px-5 py-3 font-bold text-sm text-center shadow-2xl'; d.innerHTML=msg; w.appendChild(d); setTimeout(()=>{ d.style.opacity='0'; d.style.transform='translateY(10px)'; setTimeout(()=>d.remove(),400); },2600); }
+function goldConfettiBig(){ const end=Date.now()+1200; (function f(){ confetti({particleCount:6,angle:60,spread:60,origin:{x:0},colors:['#D4AF37','#F5D67B','#FFF6C8','#fff']}); confetti({particleCount:6,angle:120,spread:60,origin:{x:1},colors:['#D4AF37','#F5D67B','#FFF6C8','#fff']}); if(Date.now()<end) requestAnimationFrame(f); })(); confetti({particleCount:120,spread:100,origin:{y:.6},colors:['#D4AF37','#F5D67B','#ffffff','#22c55e']}); }
+function smallConfetti(){ confetti({particleCount:45,spread:70,origin:{y:.7},colors:['#D4AF37','#F5D67B','#fff','#22c55e']}); }
+
+/* RENDER */
+function renderQuestion(){
+const q=QUESTIONS[qi], st=state[qi];
+document.getElementById('qCounter').textContent=`السؤال ${qi+1} / 70`;
+document.getElementById('heroQpos').textContent=qi+1;
+document.getElementById('qPageBadge').textContent=`📄 صفحة ${q.page}`;
+document.getElementById('qTypeBadge').textContent=q.type==='tf'?'صح / خطأ • True / False':'اختياري • Multiple Choice';
+document.getElementById('qEn').innerHTML=`<span class="text-[#F5D67B] font-black">Q${q.id}.</span> ${q.en}`;
+const showTr = translateAll || translated.has(qi);
+document.getElementById('qArBox').classList.toggle('hidden',!showTr);
+document.getElementById('qAr').textContent=q.ar;
+document.getElementById('trBtn').textContent=showTr?'🙈 إخفاء الترجمة':'🌐 ترجم';
+document.getElementById('trBtn').className=showTr?'rounded-xl px-4 py-2.5 font-black text-sm bg-white/15 border border-[#D4AF37]':'rounded-xl px-4 py-2.5 font-black text-sm btn-gold';
+document.getElementById('bmBtn').textContent=bookmarked.has(qi)?'⭐':'🤍';
+const ab=document.getElementById('attemptBadge');
+if(st.attempts>0 && !st.done){ ab.classList.remove('hidden'); ab.textContent=`🔄 المحاولة ${st.attempts+1}`; } else ab.classList.add('hidden');
+const grid=document.getElementById('optsGrid'); grid.innerHTML='';
+const letters=q.type==='tf'?['✓','✕']:['A','B','C','D'];
+q.opts.en.forEach((oe,i)=>{
+const b=document.createElement('button'); b.className='opt'; b.id=`opt${i}`;
+const isCorrectOpt = st.done && i===q.correct;
+const isWrongChosen = st.done && st.first!==null && st.chosen===i && i!==q.correct && mode==='exam';
+const isDisabledWrong = mode==='train' && st.wrongTried && st.wrongTried.includes(i);
+if(isCorrectOpt) b.classList.add('correct');
+if(isWrongChosen) b.classList.add('wrong');
+if(isDisabledWrong){ b.classList.add('dim'); b.disabled=true; }
+if(st.done && mode==='exam') b.disabled=true;
+if(st.done && mode==='train' && st.finalDone) b.disabled=true;
+b.innerHTML=`<span class="opt-letter">${letters[i]}</span><span class="flex-1"><span dir="ltr" class="block text-left font-pop font-semibold leading-7">${oe}</span><span class="block mt-1 text-[13px] font-bold ${showTr?'':'hidden'} text-[#F5D67B] opt-ar-trans">${q.opts.ar[i]}</span></span><span class="text-xl result-ico">${isCorrectOpt?'✅':(isWrongChosen?'❌':'')}</span>`;
+b.onclick=()=>answer(i);
+grid.appendChild(b);
+});
+// feedback
+const fb=document.getElementById('feedbackBox'), ex=document.getElementById('explainBox');
+fb.classList.add('hidden'); ex.classList.add('hidden');
+if(st.done){
+if(st.firstCorrect){ fb.classList.remove('hidden'); fb.className='mt-5 rounded-2xl p-5 text-center font-black text-lg pop feedback-ok'; fb.innerHTML=`🎉 ${st.successMsg||'أحسنت عبدالله كمّل يا بطل! 🏆'}<div class="text-xs font-bold text-green-200 mt-1">إجابة صحيحة من ${st.attempts===0?'أول محاولة':'المحاولة '+(st.attempts+1)} • +${st.attempts===0?10:5} XP</div>`; }
+else if(mode==='exam'){ fb.classList.remove('hidden'); fb.className='mt-5 rounded-2xl p-5 text-center font-black text-lg pop feedback-bad'; fb.innerHTML=`💪 حاول مرة أخرى يا عبدالله في السؤال القادم!<div class="text-sm mt-1">الإجابة الصحيحة: <b class="text-green-300">${q.opts.en[q.correct]}</b> • <b class="text-[#F5D67B]">${q.opts.ar[q.correct]}</b></div>`; }
+showExplain();
+if(st.finalDone && !st.firstCorrect){ fb.classList.remove('hidden'); fb.className='mt-5 rounded-2xl p-5 text-center font-black text-lg pop feedback-ok'; fb.innerHTML=`👏 أحسنت عبدالله! وصلت للصح بعد التعلم 💡<div class="text-xs mt-1 text-white/70">أول إجابة كانت خاطئة (محسوبة للمراجعة) لكن إصرارك بطولي — أكمل!</div>`; }
+} else if(st.attempts>0){
+fb.classList.remove('hidden'); fb.className='mt-5 rounded-2xl p-5 text-center font-black text-lg pop feedback-bad'; fb.innerHTML=`${failPhrases[st.attempts%failPhrases.length]}<div class="text-sm text-white/70 mt-1">اختر إجابة أخرى يا بطل — أنت تقدر! 🔥</div>`;
+}
+updateProgress(); renderPalette();
+document.getElementById('qCard').classList.remove('shake');
+}
+function showExplain(){ const q=QUESTIONS[qi]; const ex=document.getElementById('explainBox'); ex.classList.remove('hidden'); ex.innerHTML=`<b class="text-[#F5D67B]">💡 الشرح الذهبي:</b> ${q.ex}<div dir="rtl" class="mt-2 text-[#F5D67B] font-bold leading-7">🇸🇦 ${q.exAr}</div><div class="mt-1 text-xs text-white/60">النموذجية: <b dir="ltr" class="text-green-300">${q.opts.en[q.correct]}</b> — <b class="text-[#F5D67B]">${q.opts.ar[q.correct]}</b></div>`; }
+
+function answer(i){
+startTimer(); playClick();
+const q=QUESTIONS[qi], st=state[qi];
+if(st.done && (mode==='exam' || st.finalDone)) return;
+if(st.wrongTried && st.wrongTried.includes(i)) return;
+if(st.first===null){ st.first=i; st.attempts=0; }
+else { st.attempts++; }
+if(i===q.correct){
+// correct
+if(st.first===i){ st.firstCorrect=true; correctFirst++; streak++; bestStreak=Math.max(bestStreak,streak); xp+=10; st.successMsg=successPhrases[Math.floor(Math.random()*successPhrases.length)]; }
+else { st.firstCorrect=false; streak=0; xp+=5; if(!st.successMsg) st.successMsg=successPhrases[Math.floor(Math.random()*successPhrases.length)]; }
+st.chosen=i; st.done=true; st.finalDone=true;
+playSuccess(); smallConfetti();
+if(streak>0 && streak%5===0){ goldConfettiBig(); showCheer(`🔥 سلسلة نارية ${streak} إجابات!`,`واصل يا عبدالله! أنت تقترب من العلامة الكاملة بسرعة الصاروخ 🚀`); }
+else if(st.first===i && Math.random()<.28){ goldConfettiBig(); }
+toast(`✅ <span class="gold-text">أحسنت عبدالله كمّل يا بطل!</span> 🏆`);
+document.getElementById('qCard').classList.add('pop');
+} else {
+// wrong
+playFail();
+document.getElementById('qCard').classList.remove('shake'); void document.getElementById('qCard').offsetWidth; document.getElementById('qCard').classList.add('shake');
+if(mode==='exam'){ st.chosen=i; st.firstCorrect=false; st.done=true; st.finalDone=true; streak=0; toast(`❌ <b>حاول مرة أخرى</b> يا عبدالله في القادم! 💪`); }
+else {
+if(!st.wrongTried) st.wrongTried=[];
+st.wrongTried.push(i);
+if(st.first!==i || true){ if(st.wrongTried.length>= (q.type==='tf'?1:2) && q.type!=='tf' && st.wrongTried.length>=3){ st.chosen=q.correct; st.done=true; st.finalDone=true; st.firstCorrect=false; streak=0; } }
+toast(`❌ <b>حاول مرة أخرى</b> يا عبدالله! 🔄`);
+if(q.type==='tf'){ /* second try will be correct */ }
+}
+}
+updateHUD(); renderQuestion();
+if(state[qi].done){ setTimeout(()=>{ if(qi<69 && document.getElementById('reportSection').classList.contains('hidden')){ /* stay, let user click next */ } },600); }
+}
+function nextQ(){ playClick(); if(qi<69){ qi++; renderQuestion(); document.getElementById('quizSection').scrollIntoView({behavior:'smooth',block:'start'}); } else toast('🏁 هذا آخر سؤال — اضغط إنهاء لعرض تقريرك الملكي'); }
+function prevQ(){ playClick(); if(qi>0){ qi--; renderQuestion(); } }
+function skipQ(){ playClick(); state[qi].skipped=true; toast('⏭️ تم تخطي السؤال — يمكنك العودة له من الخريطة'); if(qi<69){ qi++; renderQuestion(); } updateProgress(); renderPalette(); }
+function toggleTranslateCurrent(){ playClick(); if(translated.has(qi)) translated.delete(qi); else translated.add(qi); renderQuestion(); }
+function translateAllToggle(){ playClick(); translateAll=!translateAll; toast(translateAll?'🌐 تم تفعيل الترجمة العربية لجميع الأسئلة بجانب الإنجليزية':'🌐 تم إخفاء الترجمات'); renderQuestion(); }
+function toggleBookmark(){ playClick(); if(bookmarked.has(qi)) bookmarked.delete(qi); else { bookmarked.add(qi); toast('⭐ تمت الإضافة للمفضلة'); } renderQuestion(); renderPalette(); }
+function reviewBookmarks(){ playClick(); if(bookmarked.size===0){ toast('⭐ لا توجد أسئلة مفضلة بعد — اضغط 🤍 لحفظ سؤال'); return; } filter='bm'; renderPalette(); document.getElementById('paletteCard').scrollIntoView({behavior:'smooth'}); }
+function setFilter(f){ playClick(); filter=f; document.querySelectorAll('.filter-btn').forEach(b=>{ if(b.dataset.f===f){ b.className='filter-btn px-3 py-1.5 rounded-lg bg-[#D4AF37] text-black'; } else { b.className='filter-btn px-3 py-1.5 rounded-lg bg-white/10'; } }); renderPalette(); }
+function updateHUD(){ document.getElementById('hdrScore').textContent=xp; document.getElementById('statCorrect').textContent=correctFirst; const wrongFirst=state.filter(s=>s.firstCorrect===false).length; document.getElementById('statWrong').textContent=wrongFirst; document.getElementById('statStreak').textContent=streak+' 🔥'; document.getElementById('xpNum').textContent=xp; const lvl=Math.floor(xp/100)+1; document.getElementById('levelNum').textContent=lvl; document.getElementById('xpBar').style.width=((xp%100))+'%'; }
+function updateProgress(){ const answered=state.filter(s=>s.done).length; const pct=Math.round(answered/70*100); document.getElementById('quizProgress').style.width=Math.max(2,pct)+'%'; document.getElementById('topProgress').style.width=pct+'%'; }
+function renderPalette(){ const p=document.getElementById('palette'); p.innerHTML=''; QUESTIONS.forEach((q,idx)=>{ const st=state[idx]; let show=true; if(filter==='ok' && !(st.done&&st.firstCorrect)) show=false; if(filter==='bad' && !(st.done&&st.firstCorrect===false)) show=false; if(filter==='un' && st.done) show=false; if(filter==='bm' && !bookmarked.has(idx)) show=false; if(!show) return; const b=document.createElement('button'); b.textContent=idx+1; b.className='pal-btn'+(idx===qi?' current':'')+((st.done&&st.firstCorrect)?' ok':(st.done&&st.firstCorrect===false)?' bad':(st.skipped&&!st.done)?' skip':''); if(bookmarked.has(idx)) b.textContent+='•'; b.title=`Q${idx+1} - صفحة ${q.page}`; b.onclick=()=>{ playClick(); qi=idx; renderQuestion(); }; p.appendChild(b); }); }
+
+/* CHEER */
+function showCheer(t,s){ document.getElementById('bigCheerTitle').textContent=t; document.getElementById('bigCheerSub').textContent=s; const o=document.getElementById('bigCheer'); o.classList.remove('hidden'); o.classList.add('flex'); }
+function closeCheer(){ const o=document.getElementById('bigCheer'); o.classList.add('hidden'); o.classList.remove('flex'); playClick(); }
+
+/* FINISH & REPORT */
+function confirmFinish(){ playClick(); const un=state.filter(s=>!s.done).length; if(un>0){ if(!confirm(`يا عبدالله، لديك ${un} سؤالًا غير مجاب. هل تريد إنهاء الاختبار وعرض النتيجة الآن؟`)) return; } finish(); }
+function finish(){ clearInterval(timerInt); playFinish(); goldConfettiBig(); setTimeout(goldConfettiBig,800);
+const correct=state.filter(s=>s.firstCorrect===true).length;
+const wrong=state.filter(s=>s.firstCorrect===false).length;
+const skipped=state.filter(s=>!s.done).length;
+const pct=Math.round(correct/70*100);
+document.getElementById('reportSection').classList.remove('hidden');
+document.getElementById('rCorrect').textContent=correct;
+document.getElementById('rWrong').textContent=wrong;
+document.getElementById('rTime').textContent=fmt(seconds);
+document.getElementById('rStreak').textContent=bestStreak+' 🔥';
+document.getElementById('finalPct').textContent=pct+'%';
+document.getElementById('reportSubtitle').textContent=`أكملت 70 سؤالًا في ${fmt(seconds)} • صح من أول مرة: ${correct} • تحتاج مراجعة: ${wrong} • متخطّى: ${skipped}`;
+let grade,msg;
+if(pct>=90){ grade='🏆 ممتاز مع مرتبة الشرف'; msg=`أسطوري يا عبدالله! ${correct}/70 من أول مرة — أحسنت كمّل يا بطل! أنت جاهز للكويز بنسبة 100% 👑🔥`; }
+else if(pct>=80){ grade='🌟 ممتاز'; msg=`رائع يا عبدالله! ${correct}/70 — أحسنت كمّل يا بطل! مراجعة سريعة للأخطاء وستكون علامتك كاملة 💎`; }
+else if(pct>=70){ grade='👏 جيد جدًا'; msg=`أداء بطولي يا عبدالله! ${correct}/70 — استمر! راجع الأسئلة الخاطئة بالأسفل وستتفوق 🚀`; }
+else if(pct>=60){ grade='💪 جيد'; msg=`بداية قوية يا عبدالله! ${correct}/70 — حاول مرة أخرى وستتحسن كثيرًا! راجع الشرح لكل سؤال 📚`; }
+else { grade='📚 يحتاج تدريب'; msg=`لا تستسلم يا بطل! ${correct}/70 — كل عظيم بدأ من هنا. راجع الأخطاء ثم أعد الاختبار وستبهر الجميع ❤️‍🔥`; }
+document.getElementById('gradeBadge').textContent=grade;
+const fm=document.getElementById('finalMessage'); fm.textContent=msg;
+const circ=document.getElementById('scoreCircle'); const off=326.7-(326.7*pct/100); setTimeout(()=>circ.style.strokeDashoffset=off,300);
+let best=parseInt(localStorage.getItem('abd_best')||'0'); if(pct>best){ localStorage.setItem('abd_best',pct); best=pct; toast('🎉 رقم قياسي جديد! best: '+pct+'%'); }
+document.getElementById('bestScoreHero').textContent=best+'%';
+showCheer(pct>=60?'أحسنت عبدالله كمّل يا بطل! 🏆':'حاول مرة أخرى يا بطل! 💪', msg);
+renderReportList(); drawCharts(correct,wrong,skipped);
+document.getElementById('reportSection').scrollIntoView({behavior:'smooth'});
+}
+function toggleWrongBtn(btn){ document.querySelectorAll('#reportSection .no-print button').forEach(b=>b.classList.replace('btn-gold','btn-ghost')); }
+function renderReportList(){
+const wrap=document.getElementById('reportList'); wrap.innerHTML='';
+QUESTIONS.forEach((q,idx)=>{
+const st=state[idx];
+const isOk=st.firstCorrect===true, isBad=st.firstCorrect===false, isSkip=!st.done;
+if(showOnlyWrong && !isBad) return;
+const userTxt = st.first===null?'— لم يُجب —':`${q.opts.en[st.first]} — ${q.opts.ar[st.first]}`;
+const modelTxt=`${q.opts.en[q.correct]} — ${q.opts.ar[q.correct]}`;
+const card=document.createElement('div');
+card.className=`glass rounded-2xl p-5 border-r-8 ${isOk?'!border-green-500':isBad?'!border-red-500':'!border-yellow-500'}`;
+card.innerHTML=`
+<div class="flex flex-wrap items-center justify-between gap-2">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="font-black btn-gold rounded-lg px-3 py-1 text-sm">Q${q.id}</span>
+<span class="text-xs font-bold bg-white/10 rounded-lg px-3 py-1">📄 صفحة ${q.page}</span>
+<span class="text-xs font-bold rounded-lg px-3 py-1 ${q.type==='tf'?'bg-purple-500/20 text-purple-200':'bg-blue-500/20 text-blue-200'}">${q.type==='tf'?'صح / خطأ':'اختياري'}</span>
+${bookmarked.has(idx)?'<span class="text-xs">⭐</span>':''}
+</div>
+<span class="font-black text-sm px-4 py-1.5 rounded-full ${isOk?'bg-green-500/20 text-green-300 border border-green-500':isBad?'bg-red-500/20 text-red-300 border border-red-500':'bg-yellow-500/20 text-yellow-200 border border-yellow-500'}">${isOk?'✅ صح':'❌ خطأ / مراجعة'}</span>
+</div>
+<div dir="ltr" class="text-left font-pop font-semibold mt-3 leading-7 text-[15px]">${q.en}</div>
+<div class="ar-box p-3 mt-2 text-sm font-bold leading-7">🇸🇦 ${q.ar}</div>
+<div class="grid md:grid-cols-2 gap-3 mt-3 text-sm">
+<div class="rounded-xl p-3 border ${isOk?'bg-green-500/10 border-green-500/50':'bg-red-500/10 border-red-500/50'}"><div class="text-xs font-black opacity-70">إجابة عبدالله (أول محاولة):</div><div class="font-bold mt-1" dir="ltr">${st.first===null?'—':q.opts.en[st.first]}</div><div class="font-bold text-[#F5D67B]">${st.first===null?'لم يُجب':q.opts.ar[st.first]}</div></div>
+<div class="rounded-xl p-3 bg-green-500/10 border border-green-500/50"><div class="text-xs font-black text-green-300">✅ الإجابة النموذجية:</div><div class="font-bold mt-1" dir="ltr">${q.opts.en[q.correct]}</div><div class="font-bold text-[#F5D67B]">${q.opts.ar[q.correct]}</div></div>
+</div>
+<div class="mt-2 text-xs leading-6 bg-black/30 rounded-xl p-3 border border-white/10">💡 <b>الشرح:</b> ${q.ex}<div dir="rtl" class="mt-2 text-[#F5D67B] font-bold leading-7">🇸🇦 ${q.exAr}</div> ${st.attempts>0?`• عدد المحاولات: ${st.attempts+1}`:''}</div>
+<div class="flex gap-2 mt-3 no-print">
+<button onclick="goToQ(${idx})" class="btn-ghost rounded-lg px-4 py-2 text-xs font-bold">🔁 العودة للسؤال</button>
+<button onclick="toggleBmReport(${idx},this)" class="btn-ghost rounded-lg px-4 py-2 text-xs font-bold">${bookmarked.has(idx)?'⭐ مفضلة':'🤍 حفظ'}</button>
+</div>`;
+wrap.appendChild(card);
+});
+if(wrap.children.length===0){ wrap.innerHTML=`<div class="glass rounded-2xl p-10 text-center font-black text-green-300 text-xl">🎉 لا توجد أخطاء يا بطل! كل إجاباتك صحيحة — أحسنت عبدالله! 👑</div>`; }
+}
+function goToQ(i){ qi=i; renderQuestion(); document.getElementById('quizSection').scrollIntoView({behavior:'smooth'}); playClick(); }
+function toggleBmReport(i,btn){ if(bookmarked.has(i)) bookmarked.delete(i); else bookmarked.add(i); renderReportList(); renderPalette(); playClick(); }
+function drawCharts(c,w,s){ charts.forEach(ch=>ch.destroy()); charts=[]; const d=document.getElementById('chartDoughnut'); charts.push(new Chart(d,{type:'doughnut',data:{labels:['صحيحة','تحتاج مراجعة','متخطّى'],datasets:[{data:[c,w,s],backgroundColor:['#22c55e','#ef4444','#D4AF37'],borderWidth:0}]},options:{plugins:{legend:{labels:{color:'#fff',font:{family:'Cairo',weight:'bold'}}}}}})); const tfC=state.slice(0,35).filter(x=>x.firstCorrect).length, tfW=35-tfC-state.slice(0,35).filter(x=>!x.done).length; const mcC=state.slice(35).filter(x=>x.firstCorrect).length; charts.push(new Chart(document.getElementById('chartBars'),{type:'bar',data:{labels:['صح/خطأ Q1-35','اختياري Q36-70'],datasets:[{label:'صحيحة',data:[tfC,mcC],backgroundColor:'#22c55e',borderRadius:10},{label:'خاطئة/متخطّى',data:[35-tfC,35-mcC],backgroundColor:'#ef4444',borderRadius:10}]},options:{scales:{x:{ticks:{color:'#fff'}},y:{ticks:{color:'#fff'},beginAtZero:true,max:35}},plugins:{legend:{labels:{color:'#fff'}}}}})); }
+function restartQuiz(){ if(!confirm('هل تريد إعادة الاختبار من جديد يا عبدالله؟')) return; state=QUESTIONS.map(()=>({chosen:null,first:null,attempts:0,done:false,skipped:false,firstCorrect:null})); qi=0; xp=0; streak=0; bestStreak=0; correctFirst=0; seconds=0; started=false; clearInterval(timerInt); document.getElementById('timerHero').textContent='00:00'; document.getElementById('reportSection').classList.add('hidden'); showOnlyWrong=false; updateHUD(); renderQuestion(); scrollToQuiz(); toast('🔄 بداية جديدة موفقة يا بطل!'); }
+function shareResult(){ const c=state.filter(s=>s.firstCorrect).length; const t=`🏆 نتيجة البطل عبدالله العبيدي في مراجعة تحليل الشبكات الاجتماعية Chapter 1: ${c}/70 (${Math.round(c/70*100)}%) — أحسنت عبدالله كمّل يا بطل! 👑`; if(navigator.share){ navigator.share({title:'نتيجتي',text:t}).catch(()=>{}); } else { navigator.clipboard.writeText(t).then(()=>toast('📋 تم نسخ النتيجة للمشاركة!')); } }
+
+/* BG STARS */
+(function(){ const cv=document.getElementById('stars'),cx=cv.getContext('2d'); let W,H,pts=[]; function rs(){ W=cv.width=innerWidth; H=cv.height=innerHeight; pts=Array.from({length:110},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.8+.4,s:Math.random()*.4+.1,g:Math.random()>.85})); } rs(); addEventListener('resize',rs); (function an(){ cx.clearRect(0,0,W,H); pts.forEach(p=>{ p.y-=p.s; if(p.y<0)p.y=H; cx.beginPath(); cx.arc(p.x,p.y,p.r,0,7); cx.fillStyle=p.g?'rgba(245,214,123,.9)':'rgba(255,255,255,.5)'; cx.fill(); }); requestAnimationFrame(an); })(); })();
+
+/* QUOTES */
+let qi2=0; setInterval(()=>{ qi2=(qi2+1)%quotes.length; const el=document.getElementById('quoteText'); el.style.opacity=0; setTimeout(()=>{ el.textContent=quotes[qi2]; el.style.opacity=1; },300); },8000);
+
+/* KEYBOARD */
+document.addEventListener('keydown',e=>{ if(!document.getElementById('reportSection').classList.contains('hidden') && e.key==='Escape') closeCheer(); if(e.key>='1'&&e.key<='4'){ const q=QUESTIONS[qi]; const idx=parseInt(e.key)-1; if(idx<q.opts.en.length) answer(idx); } if(e.key==='t'||e.key==='T'||e.key==='f'||e.key==='F') toggleTranslateCurrent(); if(e.key==='ArrowLeft') nextQ(); if(e.key==='ArrowRight') prevQ(); });
+
+/* INIT */
+window.onload=function(){
+let p=0; const li=setInterval(()=>{ p+=12; document.getElementById('loadBar').style.width=Math.min(100,p)+'%'; if(p>=100){ clearInterval(li); setTimeout(()=>{ document.getElementById('preloader').style.opacity='0'; setTimeout(()=>document.getElementById('preloader').remove(),700); },300); } },120);
+document.getElementById('bestScoreHero').textContent=(localStorage.getItem('abd_best')||'0')+'%';
+updateHUD(); renderQuestion(); renderPalette();
+setTimeout(()=>toast('👑 أهلًا عبدالله! اضغط <b>🌐 ترجم</b> بجانب أي سؤال لرؤية الترجمة العربية فورًا'),1800);
+};
+</script>
+<script>
+const SUMMARY=[
+{t:["What is Social Network Analysis?","ما هو تحليل الشبكات الاجتماعية؟"],i:[
+["SNA maps and measures relationships and flows between people, groups, organizations, computers, URLs and other connected entities. Nodes (actors) are the entities; links (ties/edges) are the relationships or flows.","يرسم تحليل الشبكات الاجتماعية (SNA) ويقيس العلاقات والتدفقات بين الأشخاص والمجموعات والمنظمات والحواسيب والروابط وغيرها. العُقد (الفاعلون) هي الكيانات، والروابط (الحواف) هي العلاقات أو التدفقات."],
+["It focuses on interaction rather than individual behavior, and gives both a visual and a mathematical analysis of relationships.","يركّز على التفاعل وليس على سلوك الفرد، ويقدّم تحليلًا بصريًا ورياضيًا للعلاقات."],
+["A social network is a set of dyadic ties, all of the same type, among a set of actors. Homophily is the tendency to form positive ties with similar others.","الشبكة الاجتماعية هي مجموعة من الروابط الثنائية من نفس النوع بين مجموعة من الفاعلين. التماثل (Homophily) هو ميل الناس لتكوين روابط إيجابية مع من يشبهونهم."]]},
+{t:["Levels and types of analysis","مستويات وأنواع التحليل"],i:[
+["Three levels: dyad, node, network. Individual level = how a person's position affects outcomes for that person; systems level = how the whole structure affects outcomes.","ثلاثة مستويات: الثنائي، العقدة، الشبكة. المستوى الفردي = أثر موقع الفرد على نتائجه؛ مستوى النظام = أثر بنية الشبكة ككل على النتائج.","Dyad level = pairs of nodes · Node level = single nodes · Network level = the whole network","مستوى الثنائي = أزواج العُقد · مستوى العقدة = العُقد الفردية · مستوى الشبكة = الشبكة كاملة"],
+["Egocentric (personal) network: centered on one person (ego) and their alters; data come from the ego only. Example: predict a teenager's obesity risk from the number of obese people in their personal network.","الشبكة الشخصية (Egocentric): تتمركز حول فرد (ego) ومعارفه (alters)؛ وتُجمع البيانات من الفرد فقط. مثال: التنبؤ بخطر السمنة لدى مراهق من عدد المصابين بالسمنة في شبكته الشخصية."],
+["Whole (sociocentric) network: ties among all pairs of nodes in a bounded group. Example: predict depression among seniors using their social position in a retirement home.","الشبكة الكاملة (Sociocentric): الروابط بين كل أزواج العُقد داخل مجموعة محددة. مثال: التنبؤ بالاكتئاب لدى كبار السن من موقعهم الاجتماعي في دار المسنين."]]},
+{t:["Graph types and representation","أنواع الرسوم البيانية وتمثيلها"],i:[
+["Directed: interaction flows one way (web pages and hyperlinks, paper citations). Undirected: flows both ways (friendships, co-authored papers).","موجّه: التفاعل باتجاه واحد (صفحات الويب والروابط، الاستشهادات). غير موجّه: التفاعل في الاتجاهين (الصداقات، الأبحاث المشتركة)."],
+["Adjacency matrix: a cell is 1 if a tie exists, otherwise 0; it is symmetric for undirected graphs. In weighted graphs the weight replaces the 1 (frequency of interaction, items exchanged, perceived strength, cost or distance).","مصفوفة التجاور: الخلية = 1 عند وجود رابط وإلا 0، وتكون متماثلة في الرسم غير الموجّه. في الرسم الموزون يحل الوزن محل الرقم 1 (تكرار التفاعل، عدد الأشياء المتبادلة، قوة العلاقة، التكلفة أو المسافة).","EXAMPLE: links 1–2, 1–3, 2–3, 2–4, 3–4. Node 1 is linked to 2 and 3 but not 4, so row 1 reads: 1→1 (–), 1→2 (1), 1→3 (1), 1→4 (0).","مثال: الروابط 1–2 و1–3 و2–3 و2–4 و3–4. العقدة 1 مرتبطة بـ 2 و3 وليس 4، فالصف الأول: إلى 1 (–)، إلى 2 (1)، إلى 3 (1)، إلى 4 (0)."]]},
+{t:["Centrality (key players)","المركزية (اللاعبون الرئيسيون)"],i:[
+["Degree centrality: how many people a node is directly linked to. It answers: how many people can this person reach directly?","مركزية الدرجة: عدد من ترتبط بهم العقدة مباشرة. تجيب: كم شخصًا يستطيع الوصول إليهم مباشرة؟","RULE: degree of a node = number of links it has.\nEXAMPLE: node 3 is linked to nodes 1, 2, 4 and 5, so its degree = 4. Node 5 (linked to 2, 3, 6, 7) is also 4, so nodes 3 and 5 are the highest.","القاعدة: درجة العقدة = عدد الروابط التي تملكها.\nمثال: العقدة 3 مرتبطة بالعقد 1 و2 و4 و5، إذن درجتها = 4. والعقدة 5 (مرتبطة بـ 2 و3 و6 و7) درجتها 4 أيضًا، فالعقدتان 3 و5 هما الأعلى."],
+["Shortest path (distance): the route with the fewest links between two nodes. Dijkstra's algorithm is the lecture's example for finding it.","أقصر مسار (المسافة): الطريق الأقل في عدد الروابط بين عقدتين. وخوارزمية ديكسترا هي مثال المحاضرة لإيجاده.","RULE: distance = number of links on the shortest route.\nEXAMPLE: from node 1 to node 4 there are two shortest routes, 1→2→4 and 1→3→4, each with 2 links, so the distance is 2.","القاعدة: المسافة = عدد الروابط في أقصر طريق.\nمثال: من العقدة 1 إلى العقدة 4 يوجد طريقان أقصر هما 1→2→4 و1→3→4، في كل منهما رابطان، إذن المسافة = 2."],
+["Betweenness centrality: how often a node sits on the shortest route between two other nodes. It shows who is the bridge, and where the network would break apart if a node disappeared.","مركزية الوساطة: كم مرة تقع العقدة على أقصر طريق بين عقدتين أخريين. توضح من هو الجسر، وأين تنقسم الشبكة لو اختفت العقدة.","RULE: for every pair of OTHER nodes, calculate\n(shortest routes between them that pass through the node) ÷ (all shortest routes between them),\nthen add the results of all pairs.\nEXAMPLE: nodes 6 and 7 have only one shortest route, 6→5→7, and it passes through node 5, so node 5 gets 1 ÷ 1 = 1 from this pair. After adding all pairs: node 5 = 9 and node 3 = 6.5, so node 5 is the bigger bridge.","القاعدة: لكل زوج من العقد الأخرى احسب\n(عدد أقصر الطرق بينهما التي تمر بالعقدة) ÷ (عدد كل أقصر الطرق بينهما)،\nثم اجمع نتائج كل الأزواج.\nمثال: العقدتان 6 و7 بينهما طريق أقصر واحد فقط هو 6→5→7 ويمر بالعقدة 5، فتحصل العقدة 5 على 1 ÷ 1 = 1 من هذا الزوج. بعد جمع كل الأزواج: العقدة 5 = 9 والعقدة 3 = 6.5، إذن العقدة 5 هي الجسر الأكبر."],
+["Closeness centrality: how fast a node can reach everyone else.","مركزية القرب: سرعة وصول العقدة إلى كل الآخرين.","RULE: closeness = (number of other nodes) ÷ (sum of the distances to all other nodes). A higher value means closer to everyone.\nEXAMPLE: node 3 has 6 other nodes. Its distances are 1, 1, 1, 1, 2, 2 and they add up to 8, so closeness = 6 ÷ 8 = 0.75 (the highest, together with node 5).\nNOTE: the lecture also shows the average-distance version = 8 ÷ 6 = 1.33, where a LOWER value is better.","القاعدة: القرب = (عدد العقد الأخرى) ÷ (مجموع المسافات إلى كل العقد الأخرى). القيمة الأعلى تعني قربًا أكبر من الجميع.\nمثال: للعقدة 3 ست عقد أخرى، ومسافاتها 1 و1 و1 و1 و2 و2 ومجموعها 8، إذن القرب = 6 ÷ 8 = 0.75 (الأعلى، ومعها العقدة 5).\nملاحظة: تعرض المحاضرة أيضًا صيغة متوسط المسافة = 8 ÷ 6 = 1.33، وفيها القيمة الأقل هي الأفضل."]]},
+{t:["Cohesion (network structure)","التماسك (بنية الشبكة)"],i:[
+["Degree of reciprocity: how many relations go both ways. It only makes sense for directed graphs.","درجة التبادلية: كم علاقة تسير في الاتجاهين. تنطبق على الرسوم الموجّهة فقط.","RULE: reciprocity = (relations that go both ways) ÷ (total relations).\nEXAMPLE: in the lecture graph, 2 of the 5 relations are reciprocated, so reciprocity = 2 ÷ 5 = 0.4.","القاعدة: التبادلية = (العلاقات في الاتجاهين) ÷ (إجمالي العلاقات).\nمثال: في رسم المحاضرة 2 من أصل 5 علاقات متبادلة، إذن التبادلية = 2 ÷ 5 = 0.4."],
+["Density: how close the network is to being fully connected. A fully connected network (clique) has density 1. A directed graph has half the density of its undirected equivalent.","الكثافة: مدى اقتراب الشبكة من الترابط الكامل. الشبكة المترابطة بالكامل (clique) كثافتها 1. والرسم الموجّه كثافته نصف كثافة نظيره غير الموجّه.","RULE: density = (links that exist) ÷ (links that are possible).\nPossible links: undirected = n × (n − 1) ÷ 2, directed = n × (n − 1), where n = number of nodes.\nEXAMPLE: n = 4 nodes and 5 links.\nUndirected: possible = 4 × 3 ÷ 2 = 6, so density = 5 ÷ 6 = 0.83.\nDirected: possible = 4 × 3 = 12, so density = 5 ÷ 12 = 0.42.","القاعدة: الكثافة = (الروابط الموجودة) ÷ (الروابط الممكنة).\nالروابط الممكنة: غير موجّه = n × (n − 1) ÷ 2، وموجّه = n × (n − 1)، حيث n = عدد العقد.\nمثال: 4 عقد و5 روابط.\nغير موجّه: الممكن = 4 × 3 ÷ 2 = 6، إذن الكثافة = 5 ÷ 6 = 0.83.\nموجّه: الممكن = 4 × 3 = 12، إذن الكثافة = 5 ÷ 12 = 0.42."]]}
+];
+let sumLang='en';
+function renderSummary(){
+ const ar=sumLang==='ar', body=document.getElementById('sumBody');
+ body.dir=ar?'rtl':'ltr';
+ body.innerHTML=SUMMARY.map(s=>`<div class="rounded-2xl bg-black/30 border border-white/10 p-5"><h3 class="font-black text-lg text-[#F5D67B] mb-3 ${ar?'':'font-pop'}">${s.t[ar?1:0]}</h3><ul class="space-y-3 text-sm leading-7 ${ar?'':'font-pop'}">${s.i.map(x=>`<li class="flex gap-2"><span class="text-[#D4AF37]">◆</span><div>${x[ar?1:0]}${x[2]?`<div dir="${ar?'rtl':'ltr'}" class="${ar?'text-right':'text-left font-pop'} text-[13px] leading-7 text-[#F5D67B] bg-black/40 border border-[#D4AF37]/40 rounded-xl p-3 mt-2 whitespace-pre-line">${x[ar?3:2]}</div>`:''}</div></li>`).join('')}</ul></div>`).join('');
+ document.getElementById('sumTitle').textContent=ar?'📘 ملخص الشابتر 1':'📘 Chapter 1 Summary';
+ document.getElementById('sumTitle').className='text-2xl md:text-3xl font-black gold-text '+(ar?'':'font-pop');
+ document.getElementById('sumBtn').textContent=ar?'🇬🇧 Show English':'🌐 ترجم للعربية';
+}
+function toggleSummary(){ sumLang=sumLang==='en'?'ar':'en'; renderSummary(); }
+renderSummary();
+</script>
+<script>
+const P4={1:[60,45],2:[240,45],3:[60,185],4:[240,185]};
+const GR={
+ g7:{n:{1:[50,35],2:[250,35],3:[110,105],4:[40,190],5:[210,140],6:[155,208],7:[270,195]},e:[[1,2],[1,3],[2,3],[2,5],[3,4],[3,5],[5,6],[5,7]]},
+ g5:{n:{1:[150,28],2:[255,100],3:[45,100],4:[150,195],5:[272,195]},e:[[1,2],[1,3],[2,3],[2,4],[3,4],[2,5],[3,5]]},
+ ga:{n:{A:[150,28],B:[55,110],D:[245,110],C:[150,195]},e:[['A','B'],['A','C'],['A','D'],['B','C'],['C','D']]},
+ gd:{n:P4,d:1,e:[[1,2],[1,3],[2,3],[2,4],[4,3]]},
+ gr:{n:P4,d:1,e:[[1,2],[1,3],[3,1],[2,3],[3,2],[2,4],[4,3]]},
+ gu:{n:P4,e:[[1,2],[1,3],[2,3],[2,4],[3,4]]},
+ gw:{n:P4,e:[[1,2,30],[1,3,5],[2,3,22],[2,4,2],[3,4,37]]}
+};
+const EXS=[
+{g:'g7',hl:[],t:['Degree centrality','مركزية الدرجة'],tf:1,
+ q:['Find the degree of every node. Which nodes have the highest degree?','أوجد درجة كل عقدة. ما العقد الأعلى درجة؟'],
+ rule:['Degree = number of links the node has.','الدرجة = عدد الروابط التي تملكها العقدة.'],
+ tbl:{head:[['Node','العقدة'],['Linked to','مرتبطة بـ'],['Degree','الدرجة']],rows:[[1,'2, 3',2],[2,'1, 3, 5',3],[3,'1, 2, 4, 5',4],[4,'3',1],[5,'2, 3, 6, 7',4],[6,'5',1],[7,'5',1]],hi:[2,4]},
+ res:['Nodes 3 and 5 have the highest degree (4).','العقدتان 3 و5 هما الأعلى درجة (4).']},
+{g:'g5',hl:[1,4],t:['Shortest paths','أقصر المسارات'],tf:1,
+ q:['List the shortest paths between node 1 and node 4. What is the distance?','اذكر أقصر المسارات بين العقدة 1 والعقدة 4. ما المسافة؟'],
+ rule:['The shortest path is the route with the fewest links. Try every route from 1 to 4 and count its links.','أقصر مسار هو الطريق الأقل في عدد الروابط. جرّب كل الطرق من 1 إلى 4 وعُدّ روابط كل طريق.'],
+ tbl:{head:[['Route','الطريق'],['Links','عدد الروابط'],['Shortest?','أقصر؟']],rows:[['1→2→4',2,'✔'],['1→3→4',2,'✔'],['1→2→3→4',3,'✘'],['1→3→2→4',3,'✘'],['1→2→5→3→4',4,'✘'],['1→3→5→2→4',4,'✘']],hi:[0,1]},
+ res:['Two shortest paths: {1,2,4} and {1,3,4}. The distance between 1 and 4 = 2.','يوجد مساران أقصران: {1,2,4} و{1,3,4}. المسافة بين 1 و4 = 2.']},
+{g:'g7',hl:[3],t:['Closeness centrality','مركزية القرب'],tf:1,
+ q:['Compute the closeness of node 3 and of node 2. Who is closer to everyone?','احسب قرب العقدة 3 والعقدة 2. من الأقرب للجميع؟'],
+ rule:['Closeness = (number of other nodes) ÷ (sum of the distances to them). Here there are 6 other nodes. A higher value = closer to everyone.','القرب = (عدد العقد الأخرى) ÷ (مجموع المسافات إليها). هنا توجد 6 عقد أخرى. القيمة الأعلى = أقرب للجميع.'],
+ tbl:{head:[['Other node','العقدة الأخرى'],['Distance from node 3','المسافة من العقدة 3'],['Distance from node 2','المسافة من العقدة 2']],rows:[[1,1,1],[2,1,'–'],[3,'–',1],[4,1,2],[5,1,1],[6,2,2],[7,2,2],[['Sum','المجموع'],8,9]],sum:1},
+ steps:[[['Closeness of node 3','قرب العقدة 3'],'6 ÷ 8 = 0.75'],[['Closeness of node 2','قرب العقدة 2'],'6 ÷ 9 = 0.67'],[['Average-distance version (node 3): lower is better','صيغة متوسط المسافة (العقدة 3): الأقل أفضل'],'8 ÷ 6 = 1.33']],
+ res:['Node 3 (0.75) is closer to everyone than node 2 (0.67). Node 5 also has 0.75.','العقدة 3 (0.75) أقرب للجميع من العقدة 2 (0.67). والعقدة 5 أيضًا 0.75.']},
+{g:'g7',hl:[5],t:['Betweenness centrality','مركزية الوساطة'],tf:1,
+ q:['Compute the betweenness of node 5: for which pairs of OTHER nodes does the shortest path go through node 5?','احسب وساطة العقدة 5: في أي أزواج من العقد الأخرى يمر أقصر طريق بالعقدة 5؟'],
+ rule:['For each pair of other nodes: (shortest paths through node 5) ÷ (all shortest paths between them). Then add all the results.','لكل زوج من العقد الأخرى: (أقصر الطرق المارة بالعقدة 5) ÷ (كل أقصر الطرق بينهما). ثم اجمع كل النتائج.'],
+ tbl:{head:[['Pairs of other nodes','أزواج العقد الأخرى'],['Why','السبب'],['Value','القيمة']],rows:[[['Node 6 with 1, 2, 3, 4','العقدة 6 مع 1 و2 و3 و4'],['6 hangs only on 5','العقدة 6 متصلة بـ 5 فقط'],'4 × 1 = 4'],[['Node 7 with 1, 2, 3, 4','العقدة 7 مع 1 و2 و3 و4'],['7 hangs only on 5','العقدة 7 متصلة بـ 5 فقط'],'4 × 1 = 4'],[['Node 6 with 7','العقدة 6 مع 7'],['only path 6→5→7','طريقهما الوحيد 6→5→7'],'1'],[['Total','المجموع'],'',9]],sum:1},
+ steps:[[['Example, pair 1 and 6: both shortest paths 1→2→5→6 and 1→3→5→6 pass node 5','مثال، الزوج 1 و6: كلا الطريقين الأقصرين 1→2→5→6 و1→3→5→6 يمران بالعقدة 5'],'2 ÷ 2 = 1']],
+ res:['Betweenness of node 5 = 9, bigger than node 3 (6.5), so node 5 is the bigger bridge. Without node 5, nodes 6 and 7 are cut off.','وساطة العقدة 5 = 9 وهي أكبر من العقدة 3 (6.5)، فالعقدة 5 هي الجسر الأكبر. وبدونها تنقطع العقدتان 6 و7.']},
+{g:'ga',hl:[],t:['Adjacency matrix (undirected)','مصفوفة التجاور (غير موجّه)'],
+ q:['Write the simple adjacency matrix of this graph (1 = tie, 0 = no tie).','اكتب مصفوفة التجاور البسيطة لهذا الرسم (1 = يوجد رابط، 0 = لا يوجد).'],
+ rule:['Write 1 if the two nodes are linked, otherwise 0 (a dash on the diagonal).','اكتب 1 إذا كانت العقدتان مرتبطتين وإلا 0 (وشرطة على القطر).'],
+ steps:[[['Links in the graph','الروابط في الرسم'],'A–B, A–C, A–D, B–C, C–D'],[['Missing link','الرابط الناقص'],'B–D']],
+ tbl:{mat:1,head:['','A','B','C','D'],rows:[['A','–',1,1,1],['B',1,'–',1,0],['C',1,1,'–',1],['D',1,0,1,'–']]},
+ res:['The matrix is symmetric because the graph is undirected.','المصفوفة متماثلة لأن الرسم غير موجّه.']},
+{g:'gd',hl:[],t:['Adjacency matrix (directed)','مصفوفة التجاور (موجّه)'],
+ q:['Write the edge list and the adjacency matrix of this directed graph. What changes if it becomes undirected?','اكتب قائمة الحواف ومصفوفة التجاور لهذا الرسم الموجّه. ماذا يتغير لو أصبح غير موجّه؟'],
+ rule:['Row = the node the arrow leaves, column = the node it points to. Put 1 only if an arrow goes from the row node to the column node.','الصف = العقدة التي يخرج منها السهم، والعمود = العقدة التي يشير إليها. ضع 1 فقط إذا كان هناك سهم من عقدة الصف إلى عقدة العمود.'],
+ steps:[[['Edge list (from → to)','قائمة الحواف (من ← إلى)'],'1→2, 1→3, 2→3, 2→4, 4→3']],
+ tbl:{mat:1,head:['','1','2','3','4'],rows:[[1,'–',1,1,0],[2,0,'–',1,1],[3,0,0,'–',0],[4,0,0,1,'–']]},
+ res:['If undirected: the edge list stays the same but the matrix becomes symmetric (2→1, 3→1, 3→2, 4→2 and 3→4 also become 1).','لو أصبح غير موجّه: تبقى قائمة الحواف نفسها لكن المصفوفة تصبح متماثلة (فتصبح 2→1 و3→1 و3→2 و4→2 و3→4 أيضًا = 1).']},
+{g:'gr',hl:[],t:['Degree of reciprocity','درجة التبادلية'],tf:1,
+ q:['Compute the reciprocity of this directed graph (each connected pair of nodes counts as one relation).','احسب درجة التبادلية لهذا الرسم الموجّه (كل زوج عقد مرتبطين يُحسب علاقة واحدة).'],
+ rule:['Reciprocity = (relations that go both ways) ÷ (total relations).','التبادلية = (العلاقات في الاتجاهين) ÷ (إجمالي العلاقات).'],
+ tbl:{head:[['Pair','الزوج'],['Arrows','الأسهم'],['Both ways?','في الاتجاهين؟']],rows:[['1 – 2','1→2','✘'],['1 – 3','1→3 , 3→1','✔'],['2 – 3','2→3 , 3→2','✔'],['2 – 4','2→4','✘'],['3 – 4','4→3','✘']],hi:[1,2]},
+ steps:[[['Total relations (pairs)','إجمالي العلاقات (الأزواج)'],'5'],[['Relations going both ways','العلاقات في الاتجاهين'],'2'],[['Reciprocity','التبادلية'],'2 ÷ 5 = 0.4']],
+ res:['Reciprocity = 0.4.','التبادلية = 0.4.']},
+{g:'gu',hl:[],t:['Density','الكثافة'],
+ q:['Compute the density of this undirected graph. What would it be if the same 5 links were directed?','احسب كثافة هذا الرسم غير الموجّه. وكم تكون لو كانت الروابط الخمس نفسها موجّهة؟'],
+ rule:['Density = (links that exist) ÷ (links that are possible). Possible links: undirected = n × (n − 1) ÷ 2, directed = n × (n − 1).','الكثافة = (الروابط الموجودة) ÷ (الروابط الممكنة). الممكن: غير موجّه = n × (n − 1) ÷ 2، وموجّه = n × (n − 1).'],
+ steps:[[['Number of nodes n','عدد العقد n'],'n = 4'],[['Existing links (missing: 1–4)','الروابط الموجودة (الناقص: 1–4)'],'5'],[['Possible links, undirected','الروابط الممكنة، غير موجّه'],'4 × 3 ÷ 2 = 6'],[['Density, undirected','الكثافة، غير موجّه'],'5 ÷ 6 = 0.83'],[['Possible links, directed','الروابط الممكنة، موجّه'],'4 × 3 = 12'],[['Density, directed','الكثافة، موجّه'],'5 ÷ 12 = 0.42']],
+ res:['Density = 0.83 (a fairly dense network). Directed = 0.42, half of it. A clique has density 1.','الكثافة = 0.83 (شبكة كثيفة نسبيًا). وللموجّه = 0.42 أي النصف. والـ clique كثافتها 1.']},
+{g:'gw',hl:[],t:['Tie strength (weights)','قوة الرابطة (الأوزان)'],
+ q:['The numbers on the links are weights (e.g., frequency of interaction). Write the weighted adjacency matrix. Which tie is the strongest?','الأرقام على الروابط هي أوزان (مثل تكرار التفاعل). اكتب مصفوفة التجاور الموزونة. ما أقوى رابطة؟'],
+ rule:['Write the weight instead of 1, and 0 if there is no link.','اكتب الوزن بدل الرقم 1، وصفرًا إذا لا يوجد رابط.'],
+ tbl:{mat:1,head:['','1','2','3','4'],rows:[[1,'–',30,5,0],[2,30,'–',22,2],[3,5,22,'–',37],[4,0,2,37,'–']]},
+ res:['Strongest tie: 3–4 (weight 37). Weakest existing tie: 2–4 (weight 2). There is no 1–4 link, so it is 0.','أقوى رابطة: 3–4 (الوزن 37). وأضعف رابطة موجودة: 2–4 (الوزن 2). ولا يوجد رابط 1–4 فقيمته 0.']}
+];
+let exShown=new Set(), exAr=new Set(), exUid=0;
+function svgGraph(g,hl){
+ const id='mk'+(exUid++), N=g.n; let s=`<svg viewBox="0 0 300 230" class="w-full max-w-[320px] mx-auto rounded-xl bg-black/30 border border-white/10"><defs><marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#F5D67B"/></marker></defs>`;
+ const has=(a,b)=>g.e.some(x=>String(x[0])===String(b)&&String(x[1])===String(a));
+ g.e.forEach(([a,b,w])=>{ const p=N[a],q=N[b]; let dx=q[0]-p[0],dy=q[1]-p[1]; const L=Math.hypot(dx,dy); const ux=dx/L,uy=dy/L; let ox=0,oy=0; if(g.d&&has(a,b)){ ox=-uy*6; oy=ux*6; }
+  const x1=p[0]+ux*17+ox,y1=p[1]+uy*17+oy,x2=q[0]-ux*(g.d?20:17)+ox,y2=q[1]-uy*(g.d?20:17)+oy;
+  s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#9aa6d8" stroke-width="2.2" ${g.d?`marker-end="url(#${id})"`:''}/>`;
+  if(w!==undefined) s+=`<text x="${(p[0]+q[0])/2+8}" y="${(p[1]+q[1])/2-5}" fill="#F5D67B" font-size="14" font-weight="800">${w}</text>`; });
+ Object.keys(N).forEach(k=>{ const c=N[k]; s+=`<circle cx="${c[0]}" cy="${c[1]}" r="16" fill="${hl.map(String).includes(k)?'#2563eb':'#a8321a'}" stroke="#F5D67B" stroke-width="2"/><text x="${c[0]}" y="${c[1]+5}" text-anchor="middle" fill="#fff" font-size="14" font-weight="800">${k}</text>`; });
+ return s+'</svg>';
+}
+function toggleAns(i){ if(exShown.has(i)) exShown.delete(i); else exShown.add(i); renderExamples(); }
+function toggleExLang(i){ if(exAr.has(i)) exAr.delete(i); else exAr.add(i); renderExamples(); }
+function exTable(t,k){
+ const cell=c=>Array.isArray(c)?c[k]:c; let h='<div class="overflow-x-auto"><table dir="ltr" class="w-full text-sm text-center border-collapse"><thead><tr>';
+ t.head.forEach((c,ci)=>{ h+=`<th class="border border-white/15 bg-[#D4AF37]/25 p-2 ${t.mat&&ci>0?'text-[#F5D67B]':''}">${cell(c)}</th>`; });
+ h+='</tr></thead><tbody>';
+ t.rows.forEach((r,ri)=>{ const last=t.sum&&ri===t.rows.length-1, hi=(t.hi||[]).includes(ri); h+=`<tr class="${last?'bg-[#D4AF37]/20 font-black':hi?'bg-green-500/20 font-bold':''}">`; r.forEach((c,ci)=>{ h+=`<td class="border border-white/10 p-2 ${t.mat&&ci===0?'bg-[#D4AF37]/25 font-black text-[#F5D67B]':''}">${cell(c)}</td>`; }); h+='</tr>'; });
+ return h+'</tbody></table></div>';
+}
+function exAnswer(e,k,ar){
+ const rule=`<div class="rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/40 p-3"><div class="font-black text-[#F5D67B] mb-1">📌 ${ar?'القاعدة':'Rule'}</div><div>${e.rule[k]}</div></div>`;
+ const tb=e.tbl?`<div>${exTable(e.tbl,k)}</div>`:'';
+ const st=e.steps?`<div class="space-y-2">${e.steps.map(s=>`<div class="rounded-lg bg-black/30 border border-white/10 p-2 flex flex-wrap items-center justify-between gap-2"><span>${s[0][k]}</span><span dir="ltr" class="font-pop font-bold text-[#F5D67B] bg-black/40 rounded-md px-3 py-1">${s[1]}</span></div>`).join('')}</div>`:'';
+ const res=`<div class="rounded-lg bg-green-500/15 border border-green-500/50 p-3 font-black">✅ ${ar?'الإجابة':'Answer'}: ${e.res[k]}</div>`;
+ return `<div class="space-y-3">${rule}${e.tf?tb+st:st+tb}${res}</div>`;
+}
+function renderExamples(){
+ const gAr=(typeof sumLang!=='undefined'&&sumLang==='ar');
+ document.getElementById('exTitle').textContent=gAr?'🧪 أمثلة محلولة على الرسوم البيانية — جرّب أولًا ثم اضغط لإظهار الإجابة':'🧪 Worked examples on graphs — try it first, then reveal the answer';
+ document.getElementById('exTitle').dir=gAr?'rtl':'ltr';
+ document.getElementById('exBody').innerHTML=EXS.map((e,i)=>{ const ar=exAr.has(i), k=ar?1:0, sh=exShown.has(i);
+  return `<div dir="${ar?'rtl':'ltr'}" class="rounded-2xl bg-black/30 border border-white/10 p-4"><div class="flex items-center justify-between gap-2 mb-3"><div class="font-black text-[#F5D67B] ${ar?'':'font-pop'}">${i+1}. ${e.t[k]}</div><button onclick="toggleExLang(${i})" class="btn-ghost rounded-lg px-3 py-1.5 text-xs font-black whitespace-nowrap">${ar?'🇬🇧 English':'🌐 ترجم'}</button></div><div dir="ltr">${svgGraph(GR[e.g],e.hl)}</div><p class="mt-3 text-sm leading-7 font-bold ${ar?'':'font-pop'}">❓ ${e.q[k]}</p><button onclick="toggleAns(${i})" class="${sh?'btn-ghost':'btn-gold'} rounded-xl px-4 py-2 text-sm font-black mt-3">${sh?(ar?'🙈 إخفاء الإجابة':'🙈 Hide answer'):(ar?'👁️ إظهار الإجابة':'👁️ Show answer')}</button><div class="${sh?'':'hidden'} mt-3 text-sm leading-7 ${ar?'':'font-pop'}">${sh?exAnswer(e,k,ar):''}</div></div>`; }).join('');
+}
+const __rs=renderSummary; renderSummary=function(){ __rs(); exAr=new Set(sumLang==='ar'?EXS.map((_,i)=>i):[]); renderExamples(); };
+renderExamples();
+</script>
+</body>
+</html>
